@@ -1,11 +1,13 @@
 @import "../KFDNode.j"
 
+// CPLogRegister(CPLogPrint);
+
 @implementation KFDNodeTest : OJTestCase
 
 - (void)testKFDNodeCanConnectToAnotherKFDNode
 {
-    var node1 = [KFDNode node];
-    var node2 = [KFDNode node];
+    var node1 = [KFDNode nodeWithName:"node1"];
+    var node2 = [KFDNode nodeWithName:"node2"];
     [self assertTrue:([node1 canConnectTo:node2])
           message:"node1 should be able to connect to node2"];
     
@@ -16,13 +18,13 @@
 - (void)testKFDNodeAllDescendents
 {
     // Create nodes
-    var n1 = [KFDNode node],
-        n2 = [KFDNode node],
-        n3 = [KFDNode node],
-        n4 = [KFDNode node],
-        n5 = [KFDNode node],
-        n6 = [KFDNode node],
-        n7 = [KFDNode node];
+    var n1 = [KFDNode nodeWithName:"n1"],
+        n2 = [KFDNode nodeWithName:"n2"],
+        n3 = [KFDNode nodeWithName:"n3"],
+        n4 = [KFDNode nodeWithName:"n4"],
+        n5 = [KFDNode nodeWithName:"n5"],
+        n6 = [KFDNode nodeWithName:"n6"],
+        n7 = [KFDNode nodeWithName:"n7"];
         
     //Construct Graph (See ./KFDNodeTestGraph.dot)
                             // digraph KFDNodeTest
@@ -64,8 +66,8 @@
 
 - (void)testKFDNodeGraphHasCyclesFunctionDetectsSimpleCycles
 {
-    var n1 = [KFDNode node],
-        n2 = [KFDNode node];
+    var n1 = [KFDNode nodeWithName:"n1"],
+        n2 = [KFDNode nodeWithName:"n2"];
     
     // simplest acyclical graph
     [n1 directedEdgeTo:n2];
@@ -96,13 +98,13 @@
 - (void)testKFDNodeGraphHasCyclesFunctionDetectsComplexCycles
 {
     // Create nodes
-    var n1 = [KFDNode node],
-        n2 = [KFDNode node],
-        n3 = [KFDNode node],
-        n4 = [KFDNode node],
-        n5 = [KFDNode node],
-        n6 = [KFDNode node],
-        n7 = [KFDNode node];
+    var n1 = [KFDNode nodeWithName:"n1"],
+        n2 = [KFDNode nodeWithName:"n2"],
+        n3 = [KFDNode nodeWithName:"n3"],
+        n4 = [KFDNode nodeWithName:"n4"],
+        n5 = [KFDNode nodeWithName:"n5"],
+        n6 = [KFDNode nodeWithName:"n6"],
+        n7 = [KFDNode nodeWithName:"n7"];
         
     //Construct Graph with cycles
                             // digraph KFDNodeTestCycles
