@@ -12,20 +12,24 @@ KFDNodeCycleException = "KFDNodeCycleException";
  */
 KFDNodeGraphHasCycles = function(aNode, traverseParents) 
 {
+    CPLog.trace("KFDNodeGraphHasCycles: Testing for cycles starting at %s", [aNode name]);
     traverseParents = traverseParents || NO;
     var stack = []
-    function isAcyclic(node){
+    function isAcyclic(node)
+    {
         if([stack containsObject:node])
         {
             return false;
         }
         stack.push(node);
-
+        CPLog.trace("KFDNodeGraphHasCycles: at node %s", [node name]);
+        
         var targetNode = nil;
         var nodeIter = traverseParents ? [[node inEdges] objectEnumerator] : 
                                          [[node outEdges] objectEnumerator];
         
-        traverseParents ? CPLog("Traversing inEdges") : CPLog("Travering outEdges");
+        traverseParents ? CPLog.trace("KFDNodeGraphHasCycles: Traversing inEdges") : 
+                          CPLog.trace("KFDNodeGraphHasCycles: Travering outEdges");
         
         while(targetNode = [nodeIter nextObject])
         {
@@ -38,11 +42,14 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
         return true;
     }
     
-    return !isAcyclic(aNode);
+    var result = isAcyclic(aNode);
+    CPLog.trace("KFDNodeGraphHasCycles: Graph staring at %s is acyclic: %s", [aNode name], result);
+    return !result;
 };
 
 @implementation KFDNode : CPObject
 {
+    CPString    name                    @accessors;
     CPSet       outEdges                @accessors(readonly);
     CPSet       inEdges                 @accessors(readonly);
     CPSet       allowsConnectionsTo      @accessors(readonly);
@@ -80,9 +87,23 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     return [[self alloc] init];
 }
 
++ (id)nodeWithName:(CPString)aName
+{
+    var node = [self node];
+    [node setName:aName];
+    return node;
+}
+
 + (id)acyclicNode
 {
     return [[self alloc] initAcyclic];
+}
+
++ (id)acyclicNodeWithName:(CPString)aName
+{
+    var node = [self acyclicNode];
+    [node setName:aName]
+    return node;
 }
 
 - (BOOL)hasOutgoingEdgeTo:(KFDNode)otherNode
@@ -99,26 +120,37 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
 {
     if([self canConnectTo:otherNode])
     {
+        CPLog.trace("directedEdgeTo: %s allowed to connect to %s", [self name], [otherNode name]);
+        
         // If the otherNode has no incoming or outgoing edges, then it cannot introduce
         //  any cycles into the graph. We test because adding a single, indepedent node 
         //  is a common case.
-        var otherNodeCannotIntroduceCycles = ![[otherNode inEdges] anyObject] && ![[otherNode outEdges] anyObject];
+        var otherNodeCouldIntroduceCycles = [[otherNode inEdges] anyObject] || [[otherNode outEdges] anyObject];
+        CPLog.trace("directedEdgeTo: %s could introduce a cycle?: %s", [otherNode name], otherNodeCouldIntroduceCycles);
         
         //Add the node to the graph first
         [[self outEdges] addObject:otherNode];
         [[otherNode inEdges] addObject:self];
-        if(shouldPreventCycles && !nodeCannotIndroduceCycles)
+        
+        if(shouldPreventCycles && otherNodeCouldIntroduceCycles)
         {
-            if([self descendentsHaveCycles] || [self parentsHaveCycles])
+
+            if([self cycleInDescendents] || [self cycleInParents])
             {
+                CPLog.warn("directedEdgeTo: detected a cycle! removing edge from %s to %s", [self name], [otherNode name]);
                 //If adding the edge/connection introduces cycles, we should remove it.
                 [[self outEdges] removeObject:otherNode];
                 [[otherNode inEdges] removeObject:self];
-                // Notify caller that we couldn't add the node
+                [CPException raise:KFDNodeCycleException reason:"Connecting the node would introduce a cycle."];
             }
             
         }
         
+    }
+    else
+    {
+        CPLog.warn("directedEdgeTo: %s not allowed to connect to %s", [self name], [otherNode name]);
+        [CPException raise:KFDNodeNotAllowedException reason:"Node is not allowed to be added."];
     }
 }
 
