@@ -16,6 +16,8 @@
         
         [[self allowConnectionsTo] removeAllObjects];
         [[self allowConnectionsTo] addObject:KFDSubjectNode];
+        
+        [self setShouldPreventCycles:YES];
     }
     return self;
 }
