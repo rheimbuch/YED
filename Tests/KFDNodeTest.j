@@ -127,4 +127,38 @@
     [self assertTrue:KFDNodeGraphHasCycles(n7)
             message:"Starting at n7, cycle should be detected"];
 }
+
+- (void)testKFDNodeCyclePrevention
+{
+    var n1 = [KFDNode acyclicNodeWithName:"n1"],
+        n2 = [KFDNode acyclicNodeWithName:"n2"],
+        n3 = [KFDNode acyclicNodeWithName:"n3"];
+    
+    // Setup acyclic graph
+    
+    [n1 directedEdgeTo:n2];
+    [n2 directedEdgeTo:n3];
+    
+    [self assertFalse:[n1 cycleInDescendents]
+            message:"n1 should not have any cycles in its descendents"];
+    
+    // Try to introduce a cycle
+    try
+    {
+        CPLog.info("Introducing a cycle: n3 -> n1");
+        [n3 directedEdgeTo:n1];
+    }
+    catch(err)
+    {
+        CPLog.info("Caught Error: %s", err);
+    }
+    // The edge should not have been introduced
+    [self assertFalse:([[n3 outEdges] containsObject:n1])
+            message:"n1 should not be in n3's outgoing edges"];
+    [self assertFalse:([[n1 inEdges] containsObject:n3])
+            message:"n3 should not be in n1's incoming edges"];
+    // Therefore there should not be a cycle
+    [self assertFalse:[n1 cycleInDescendents]
+            message:"n1 should not have any cycles in its descendents"];
+}
 @end
