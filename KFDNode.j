@@ -55,7 +55,9 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     CPSet       allowsConnectionsTo      @accessors(readonly);
     CPSet       allowsConnectionsFrom    @accessors(readonly);
     
-    BOOL        shouldPreventCycles     @accessors;
+    BOOL        isAcyclic     @accessors;
+    
+    id          delegate                @accessors;
 }
 
 - (id)init
@@ -67,7 +69,7 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
         inEdges = [CPSet set];
         allowsConnectionsTo = [CPSet setWithObject:[self class]];
         allowsConnectionsFrom = [CPSet setWithObject:[self class]];
-        shouldPreventCycles = NO;
+        isAcyclic = NO;
     }
     return self;
 }
@@ -77,7 +79,7 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     self = [self init]
     if(self)
     {
-        shouldPreventCycles = YES;
+        isAcyclic = YES;
     }
     return self;
 }
@@ -118,6 +120,9 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
 
 - (void)directedEdgeTo:(KFDNode)otherNode
 {
+    if([delegate respondsToSelector:@selector(willCreate:directedEdgeFromNode:toNode:)])
+        [delegate willCreate:YES directedEdgeFromNode:self toNode:otherNode];
+    
     if([self canConnectTo:otherNode])
     {
         CPLog.trace("directedEdgeTo: %s allowed to connect to %s", [self name], [otherNode name]);
@@ -132,7 +137,7 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
         [[self outEdges] addObject:otherNode];
         [[otherNode inEdges] addObject:self];
         
-        if(shouldPreventCycles && otherNodeCouldIntroduceCycles)
+        if(isAcyclic && otherNodeCouldIntroduceCycles)
         {
 
             if([self cycleInDescendents] || [self cycleInParents])
@@ -141,15 +146,23 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
                 //If adding the edge/connection introduces cycles, we should remove it.
                 [[self outEdges] removeObject:otherNode];
                 [[otherNode inEdges] removeObject:self];
+                
+                if([delegate respondsToSelector:@selector(didCreate:directedEdgeFromNode:toNode:)])
+                    [delegate didCreate:NO directedEdgeFromNode:self toNode:otherNode];
+                
                 [CPException raise:KFDNodeCycleException reason:"Connecting the node would introduce a cycle."];
             }
             
         }
-        
+        if([delegate respondsToSelector:@selector(didCreate:directedEdgeFromNode:toNode:)])
+            [delegate didCreate:YES directedEdgeFromNode:self toNode:otherNode];
     }
     else
     {
         CPLog.warn("directedEdgeTo: %s not allowed to connect to %s", [self name], [otherNode name]);
+        if([delegate respondsToSelector:@selector(didCreate:directedEdgeFromNode:toNode:)])
+            [delegate didCreate:NO directedEdgeFromNode:self toNode:otherNode];
+        
         [CPException raise:KFDNodeNotAllowedException reason:"Node is not allowed to be added."];
     }
 }
@@ -159,6 +172,11 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     [otherNode directedEdgeTo:self];
 }
 
+
+- (void)removeDirectedEdgeTo:(KFDNode)otherNode
+{
+    
+}
 /*
  * Is the node allowed to connect to another node.
  * By default all KFDNodes can connect to any other node.
