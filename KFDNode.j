@@ -1,6 +1,9 @@
 @import <Foundation/CPObject.j>
 @import <Foundation/CPSet.j>
 
+// Constants
+KFDNodeCycleException = "KFDNodeCycleException";
+
 /*
  * Performs a depth-first-search of an edge set,
  *  tracking each node encountered. If a node is
