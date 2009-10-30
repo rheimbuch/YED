@@ -179,16 +179,14 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     return descendents;
 }
 
-
-
-- (BOOL)descendentsHaveCycles
+- (BOOL)cycleInDescendents
 {
-    
+    return KFDNodeGraphHasCycles(self,NO);
 }
 
-- (BOOL)parentsHaveCycles
+- (BOOL)cycleInParents
 {
-    
+    return KFDNodeGraphHasCycles(self,YES);
 }
 
 
