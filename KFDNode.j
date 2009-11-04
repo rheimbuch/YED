@@ -56,8 +56,6 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     CPSet       allowsConnectionsFrom    @accessors(readonly);
     
     BOOL        isAcyclic     @accessors;
-    
-    id          delegate                @accessors;
 }
 
 - (id)init
@@ -120,9 +118,6 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
 
 - (void)directedEdgeTo:(KFDNode)otherNode
 {
-    if([delegate respondsToSelector:@selector(willCreate:directedEdgeFromNode:toNode:)])
-        [delegate willCreate:YES directedEdgeFromNode:self toNode:otherNode];
-    
     if([self canConnectTo:otherNode])
     {
         CPLog.trace("directedEdgeTo: %s allowed to connect to %s", [self name], [otherNode name]);
@@ -147,22 +142,14 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
                 [[self outEdges] removeObject:otherNode];
                 [[otherNode inEdges] removeObject:self];
                 
-                if([delegate respondsToSelector:@selector(didCreate:directedEdgeFromNode:toNode:)])
-                    [delegate didCreate:NO directedEdgeFromNode:self toNode:otherNode];
-                
                 [CPException raise:KFDNodeCycleException reason:"Connecting the node would introduce a cycle."];
             }
             
         }
-        if([delegate respondsToSelector:@selector(didCreate:directedEdgeFromNode:toNode:)])
-            [delegate didCreate:YES directedEdgeFromNode:self toNode:otherNode];
     }
     else
     {
-        CPLog.warn("directedEdgeTo: %s not allowed to connect to %s", [self name], [otherNode name]);
-        if([delegate respondsToSelector:@selector(didCreate:directedEdgeFromNode:toNode:)])
-            [delegate didCreate:NO directedEdgeFromNode:self toNode:otherNode];
-        
+        CPLog.warn("directedEdgeTo: %s not allowed to connect to %s", [self name], [otherNode name]);      
         [CPException raise:KFDNodeNotAllowedException reason:"Node is not allowed to be added."];
     }
 }
