@@ -162,9 +162,28 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
 
 
 - (void)removeDirectedEdgeTo:(KFDNode)otherNode
-{
-    
+{       
+    [[self outEdges] removeObject:otherNode];
+    [[otherNode inEdges] removeObject:self];
 }
+
+- (void)disconnectFromAllNodes
+{
+    var node = nil,
+        outIter = [outEdges objectEnumerator],
+        inIter = [inEdges objectEnumerator];
+    
+    while(node = [outIter nextObject])
+    {
+        [self removeDirectedEdgeTo:node];
+    }
+    
+    while(node = [inIter nextObject])
+    {
+        [node removeDirectedEgeTo:self];
+    }
+}
+
 /*
  * Is the node allowed to connect to another node.
  * By default all KFDNodes can connect to any other node.
