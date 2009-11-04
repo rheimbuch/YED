@@ -3,6 +3,7 @@
 
 // Constants
 KFDNodeCycleException = "KFDNodeCycleException";
+KFDNodeNotAllowedException = "KFDNodeNotAllowedException";
 
 /*
  * Performs a depth-first-search of an edge set,
