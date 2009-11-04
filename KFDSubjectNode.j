@@ -17,7 +17,7 @@
         [[self allowConnectionsTo] removeAllObjects];
         [[self allowConnectionsTo] addObject:KFDOperationNode];
         
-        [self setShouldPreventCycles:YES];
+        [self setIsAcyclic:YES];
     }
     return self;
 }
