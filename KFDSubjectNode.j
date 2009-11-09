@@ -11,11 +11,11 @@
     self = [super init];
     if(self)
     {
-        [[self allowConnectionsFrom] removeAllObjects];
-        [[self allowConnectionsFrom] addObject:KFDOperationNode];
+        [[self allowsConnectionsFrom] removeAllObjects];
+        [[self allowsConnectionsFrom] addObject:KFDOperationNode];
         
-        [[self allowConnectionsTo] removeAllObjects];
-        [[self allowConnectionsTo] addObject:KFDOperationNode];
+        [[self allowsConnectionsTo] removeAllObjects];
+        [[self allowsConnectionsTo] addObject:KFDOperationNode];
         
         [self setIsAcyclic:YES];
     }
