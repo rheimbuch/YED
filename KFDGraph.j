@@ -15,6 +15,20 @@ KFDGraphEdgeNotAllowedNotification = @"KFDGraphEdgeNotAllowedNotification";
 KFDGraphEdgeWouldCauseCycleNotification = @"KFDGraphEdgeWouldCauseCycleNotification";
 KFDGraphEdgeAddedNotification = @"KFDGraphEdgeAddedNotification";
 KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
+
+/*! @class KFDGraph
+    ** Delegate Protocol **
+    - (void)willAddNode:(KFDNode)aNode toGraph:(KFDGraph)aGraph
+    - (void)didAddNode(KFDNode)aNode toGraph:(KFDGraph)aGraph
+    - (void)willRemoveNode:(KFDNode)aNode fromGraph:(KFDGraph)aGraph
+    - (void)didRemoveNode:(KFDNode)aNode fromGraph:(KFDGraph)aGraph
+    - (void)willAddEdgeFromNode:(KFDNode)startNode toNode:(KFDNode)endNode inGraph:(KFDGraph)aGraph
+    - (void)didAddEdge:(BOOL)edgeAdded fromNode:(KFDNode)startNode toNode:(KFDNode)endNode inGraph:(KFDGraph)aGraph
+    - (void)willRemoveEdgeFromNode:(KFDNode)startNode toNode:(KFDNode)endNode inGraph:(KFDGraph)aGraph
+    - (void)didRemoveEdge:(BOOL)edgeRemoved fromNode:(KFDNode)startNode toNode:(KFDNode)endNode inGraph:(KFDGraph)aGraph
+
+*/
+
 @implementation KFDGraph : CPObject
 {
     CPSet   nodes       @accessors;
