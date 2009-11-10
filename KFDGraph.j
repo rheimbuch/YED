@@ -69,8 +69,19 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
             
         [nodes addObject:aNode];
         
+        [[CPNotificationCenter defaultCenter] 
+            postNotificationName:KFDGraphNodeAddedNotification
+            object:self
+            userInfo:[CPDictionary dictionaryWithJSObject:{
+                node:aNode
+            }]];
+        
         if([delegate respondsToSelector:@selector(didAddNode:toGraph:)])
             [delegate didAddNode:aNode toGraph:self];
+    }
+    else 
+    {
+        [CPException raise:KFDGraphNodeTypeNotAllowedException message:"The type of the added node is not allowed in this graph."];
     }
 }
 
@@ -83,7 +94,14 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
             
         [aNode disconnectFromAllNodes];
         [nodes removeObject:aNode];
-            
+        
+        [[CPNotificationCenter defaultCenter] 
+            postNotificationName:KFDGraphNodeRemovedNotification
+            object:self
+            userInfo:[CPDictionary dictionaryWithJSObject:{
+                node:aNode
+            }]];
+        
         if([delegate respondsToSelector:@selector(didRemoveNode:fromGraph:)])
             [delegate didRemoveNode:aNode fromGraph:self];
     }
@@ -100,17 +118,72 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
     // If the nodes aren't in the nodes set, then they aren't allowed
     if(![nodes containsObject:fromNode] || ![nodes containsObject:toNode])
     {
-        [CPException raise:KFDGraphCannotCreateDirectedEdge reason:"One of the nodes is not in the graph."];
+        [CPException raise:KFDGraphCannotCreateDirectedEdgeException reason:"One of the nodes is not in the graph."];
         return;
     }
         
-    if([delegate respondsToSelector:@selector(willAddEdgeFrom:to:inGraph:)])
-        [delegate willAddEdgeFrom:fromNode to:toNode inGraph:self];
-        
-    [fromNode directedEdgeTo:toNode];
+    if([delegate respondsToSelector:@selector(willAddEdgeFromNode:toNode:inGraph:)])
+        [delegate willAddEdgeFromNode:fromNode toNode:toNode inGraph:self];
     
-    if([delegate respondsToSelector:@selector(didAddEdgeFrom:to:inGraph:)])
-        [delegate didAddEdgeFrom:fromNode to:toNode inGraph:self];
+    try
+    {    
+        [fromNode directedEdgeTo:toNode];
+    }
+    catch(err)
+    {
+        if([err name] === KFDNodeNotAllowedException)
+        {
+            if([delegate respondsToSelector:@selector(directedEdgeFromNode:toNode:isNotAllowedInGraph:)])
+                [delegate directedEdgeFromNode:fromNode toNode:toNode isNotAllowedInGraph:self];
+            
+            [[CPNotificationCenter defaultCenter] 
+                postNotificationName:KFDGraphEdgeNotAllowedNotification
+                object:self
+                userInfo:[CPDictionary dictionaryWithJSObject:{
+                    fromNode:fromNode,
+                    toNode:toNode
+                }]];
+                
+            if([delegate respondsToSelector:@selector(didAddEdge:fromNode:toNode:inGraph:)])
+                [delegate didAddEdge:NO fromNode:fromNode toNode:toNode inGraph:self];
+            
+            return;
+        }
+        else if([err name] === KFNodeCycleException)
+        {
+            if([delegate respondsToSelector:@selector(directedEdgeFromNode:toNode:wouldIntroduceCycleInGraph:)])
+                [delegate directedEdgeFromNode:fromNode toNode:toNode wouldIntroduceCycleInGraph:self];
+            
+            [[CPNotificationCenter defaultCenter] 
+                postNotificationName:KFDGraphEdgeWouldCauseCycleNotification
+                object:self
+                userInfo:[CPDictionary dictionaryWithJSObject:{
+                    fromNode:fromNode,
+                    toNode:toNode
+                }]];
+                
+            if([delegate respondsToSelector:@selector(didAddEdge:fromNode:toNode:inGraph:)])
+                [delegate didAddEdge:NO fromNode:fromNode toNode:toNode inGraph:self];
+            
+            return;
+        }
+        else
+        {
+            // Otherwise rethrow the error
+            throw err;
+        }
+    }
+    
+    if([delegate respondsToSelector:@selector(didAddEdge:fromNode:toNode:inGraph:)])
+        [delegate didAddEdge:YES fromNode:fromNode toNode:toNode inGraph:self];
+    
+    [[CPNotificationCenter defaultCenter] 
+        postNotificationName:KFDGraphEdgeAddedNotification
+        object:self
+        userInfo:[CPDictionary dictionaryWithJSObject:{
+            fromNode:fromNode,
+            toNode:toNode
+        }]];
 }
 
 - (void)removeDirectedEdgeFrom:(KFDNode)fromNode to:(KFDNode)toNode
@@ -119,13 +192,21 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
     if(![nodes containsObject:fromNode] || ![nodes containsObject:toNode])
         return;
     
-    if([delegate respondsToSelector:@selector(willRemoveEdgeFrom:to:inGraph:)])
-        [delegate willRemoveEdgeFrom:fromNode to:toNode inGraph:self];
+    if([delegate respondsToSelector:@selector(willRemoveEdgeFromNode:toNode:inGraph:)])
+        [delegate willRemoveEdgeFromNode:fromNode toNode:toNode inGraph:self];
         
     [fromNode removeDirectedEdgeTo:toNode];
     
-    if([delegate respondsToSelector:@selector(didRemoveEdgeFrom:to:inGraph:)])
-        [delegate didRemoveEdgeFrom:fromNode to:toNode inGraph:self];
+    if([delegate respondsToSelector:@selector(didRemoveEdge:fromNode:toNode:inGraph:)])
+        [delegate didRemoveEdge:YES fromNode:fromNode toNode:toNode inGraph:self];
+    
+    [[CPNotificationCenter defaultCenter] 
+        postNotificationName:KFDGraphEdgeRemovedNotification
+        object:self
+        userInfo:[CPDictionary dictionaryWithJSObject:{
+            fromNode:fromNode,
+            toNode:toNode
+        }]];
 }
 
 - (BOOL)containsNode:(KFDNode)aNode
