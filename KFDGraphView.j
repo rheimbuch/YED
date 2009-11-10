@@ -20,6 +20,22 @@
     [aNodeView removeFromSuperview];
 }
 
+- (void)addEdgeView:(KFDEdgeView)edgeView
+{
+    if([[self subviews] containsObject:edgeView])
+        return;
+    
+    [self addSubview:edgeView];
+}
+
+- (void)removeEdgeView:(KFDEdgeView)edgeView
+{
+    if(![[self subviews] containsObject:edgeView])
+        return
+        
+    [edgeView removeFromSuperview];
+}
+
 - (void)removeAllNodeViews
 {
     var viewIter = [[self subviews] objectEnumerator];
