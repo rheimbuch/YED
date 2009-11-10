@@ -7,12 +7,14 @@
  */
 
 @import <Foundation/CPObject.j>
+@import "KFDEdgeView.j"
 @import "KFDGraph.j"
 @import "KFDGraphViewController.j"
 @import "KFDNode.j"
 @import "KFDNodeView.j"
 @import "KFDNodeViewRegistry.j"
 @import "KFDOperationNode.j"
+@import "KFDSubjectNode.j"
 
 
 CPLogRegister(CPLogConsole);
@@ -30,29 +32,29 @@ CPLogRegister(CPLogConsole);
     // Setup default Node Views
     CPLog.trace("Setting up view registry");
     var registry = [KFDNodeViewRegistry registry];
-    var defaultNodeView = [[KFDNodeView alloc] initWithFrame:CPRectMake(0,0,100,50)];
-    [defaultNodeView setBorderWidth:2.0];
-    [defaultNodeView setBorderColor:[CPColor redColor]];
-    [defaultNodeView setCornerRadius:10];
-    [defaultNodeView setFillColor:[CPColor whiteColor]];
-    [registry registerPrototype:defaultNodeView
-                for:KFDNode];
+    var subjectNodeView = [[KFDNodeView alloc] initWithFrame:CPRectMake(0,0,150,50)];
+    [subjectNodeView setBorderWidth:4.0];
+    [subjectNodeView setBorderColor:[CPColor redColor]];
+    [subjectNodeView setCornerRadius:10];
+    [subjectNodeView setFillColor:[CPColor whiteColor]];
+    [registry registerPrototype:subjectNodeView
+                for:KFDSubjectNode];
     
-    var otherNodeView = [[KFDNodeView alloc] initWithFrame:CPRectMake(0,0,100,80)];
-    [otherNodeView setBorderWidth:3.0];
-    [otherNodeView setBorderColor:[CPColor greenColor]];
-    [otherNodeView setCornerRadius:0];
-    [otherNodeView setFillColor:[CPColor whiteColor]];
-    [registry registerPrototype:otherNodeView
+    var operationNodeView = [[KFDNodeView alloc] initWithFrame:CPRectMake(0,0,100,80)];
+    [operationNodeView setBorderWidth:3.0];
+    [operationNodeView setBorderColor:[CPColor greenColor]];
+    [operationNodeView setCornerRadius:0];
+    [operationNodeView setFillColor:[CPColor whiteColor]];
+    [registry registerPrototype:operationNodeView
                 for:KFDOperationNode];
     // Setup graph and graph controller
     graph = [KFDGraph graph];
     
-    var graphViewController = [[KFDGraphViewController alloc] init];
+     graphViewController = [[KFDGraphViewController alloc] init];
     [graphViewController setNodeViewRegistry:registry];
     [graphViewController setRepresentedObject:graph];
     
-    var graphView = [graphViewController view];
+     graphView = [graphViewController view];
     [graphView setFrame:CPRectMake(0,0,CPRectGetWidth([contentView bounds]),CPRectGetHeight([contentView bounds]))];
     [graphView setAutoresizingMask:(CPViewWidthSizable | CPViewHeightSizable)];
     [contentView addSubview:graphView];
@@ -62,10 +64,19 @@ CPLogRegister(CPLogConsole);
     console.debug("Registry");
     console.debug(registry);
     
-    n1 = [KFDNode nodeWithName:"n1"];
-    [graph addNode:n1];
-    op1 = [KFDOperationNode nodeWithName:"op1"];
-    [graph addNode:op1];
+    rat1 = [KFDSubjectNode nodeWithName:"Rat1"];
+    [graph addNode:rat1];
+    fed1 = [KFDOperationNode nodeWithName:"Fed 5cc glucose"];
+    [graph addNode:fed1];
+    fedRat1 = [KFDSubjectNode nodeWithName:"Rat1 Fed"];
+    [graph addNode:fedRat1];
+    
+    [graph createDirectedEdgeFrom:rat1 to:fed1];
+    [graph createDirectedEdgeFrom:fed1 to:fedRat1];
+
+    
+    
+    
     // At this point, the graph should have two nodes, and 
     //  the graph view should show them with the above
     //  registered nodeviews.
@@ -94,7 +105,7 @@ CPLogRegister(CPLogConsole);
     var name = prompt("Node Name:");
     if(name)
     {
-        var node = [KFDNode nodeWithName:name];
+        var node = [KFDSubjectNode nodeWithName:name];
         [graph addNode:node];
     }
 }
