@@ -228,6 +228,11 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
     return [nodes containsObject:aNode];
 }
 
+- (BOOL)containsEdgeFromNode:(KFDNode)startNode toNode:endNode
+{
+    return [startNode hasOutgoingEdgeTo:endNode];
+}
+
 - (void)allowsNode:(KFDNode)aNode
 {
     var isAllowed = NO,
