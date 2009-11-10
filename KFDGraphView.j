@@ -42,4 +42,9 @@
         [controller addedNodeView:nodeView toGraphView:self];
 }
 
+- (void)mouseDown:(CPEvent)anEvent
+{
+    [[KFDEditorView sharedEditor] setNodeView:nil];
+}
+
 @end
