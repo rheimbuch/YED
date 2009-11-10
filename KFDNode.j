@@ -108,6 +108,11 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     return node;
 }
 
+- (BOOL)isNode
+{
+    return YES;
+}
+
 - (BOOL)isEqual:(id)other
 {
     if(other === self)
