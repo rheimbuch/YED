@@ -210,7 +210,7 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     
     while(node = [inIter nextObject])
     {
-        [node removeDirectedEgeTo:self];
+        [node removeDirectedEdgeTo:self];
     }
 }
 
