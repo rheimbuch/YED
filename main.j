@@ -1,6 +1,6 @@
 /*
  * AppController.j
- * KefedDiagram
+ * YEDDiagram
  *
  * Created by You on October 27, 2009.
  * Copyright 2009, Your Company All rights reserved.
