@@ -1,5 +1,7 @@
 @import <Foundation/CPObject.j>
 @import <Foundation/CPSet.j>
+@import <Foundation/CPException.j>
+@import <Foundation/CPNotificationCenter.j>
 @import "KFDNode.j"
 
 // Exceptions
