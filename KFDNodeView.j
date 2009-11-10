@@ -40,6 +40,8 @@
         
         
         nameField = [CPTextField labelWithTitle:[self hash]];
+        [nameField setValue:CPCenterTextAlignment forThemeAttribute:@"alignment"];
+        [nameField setCenter:[self convertPoint:[self center] fromView:nil]];
         [nameField setAutoresizingMask:(CPViewMinXMargin | CPViewMaxXMargin | CPViewMinYMargin | CPViewMaxYMargin)];
         // console.log("NodeView Center:");
         // console.log([self center]);
@@ -88,6 +90,7 @@
     CPLog.trace("Node name is: " + [representedObject name]);
     console.debug(self);
     [nameField setStringValue:[representedObject name]];
+    [nameField sizeToFit];
     
     [self setNeedsDisplay:YES];
 }
