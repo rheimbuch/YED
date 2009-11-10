@@ -3,6 +3,7 @@
 @import <AppKit/CPBox.j>
 
 @import "CPBox+CPCoding.j"
+@import "CPView+OffsetCorners.j"
 @import "KFDEditorView.j"
 @import "KFDNode.j"
 
@@ -114,6 +115,8 @@
                                      origin.y + location.y - dragLocation.y)];
     dragLocation = location;
 }
+
+
 
 @end
 
