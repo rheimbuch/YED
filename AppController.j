@@ -26,6 +26,7 @@ CPLogRegister(CPLogConsole);
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification
 {
     // This is called when the application is done loading.
+    // [[KFDEditorView sharedEditor] setBackgroundColor:[CPColor blueColor]];
     // Setup default Node Views
     CPLog.trace("Setting up view registry");
     var registry = [KFDNodeViewRegistry registry];
