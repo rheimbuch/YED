@@ -1,15 +1,15 @@
-@import "KFDGraph.j"
-@import "KFDOperationNode.j"
-@import "KFDSubjectNode.j"
+@import "YEDGraph.j"
+@import "YEDOperationNode.j"
+@import "YEDSubjectNode.j"
 
-@implementation KFDModelGraph : KFDGraph
+@implementation YEDModelGraph : YEDGraph
 
 - (id)init
 {
     self = [super init];
     if(self)
     {
-        allowedNodeTypes = [CPSet setWithArray:[KFDOperationNode, KFDSubjectNode]];
+        allowedNodeTypes = [CPSet setWithArray:[YEDOperationNode, YEDSubjectNode]];
     }
     return self;
 }

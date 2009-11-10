@@ -1,7 +1,7 @@
-@import "KFDNode.j"
-@import "KFDSubjectNode.j"
+@import "YEDNode.j"
+@import "YEDSubjectNode.j"
 
-@implementation KFDOperationNode : KFDNode
+@implementation YEDOperationNode : YEDNode
 {
     
 }
@@ -12,10 +12,10 @@
     if(self)
     {
         [[self allowsConnectionsFrom] removeAllObjects];
-        [[self allowsConnectionsFrom] addObject:KFDSubjectNode];
+        [[self allowsConnectionsFrom] addObject:YEDSubjectNode];
         
         [[self allowsConnectionsTo] removeAllObjects];
-        [[self allowsConnectionsTo] addObject:KFDSubjectNode];
+        [[self allowsConnectionsTo] addObject:YEDSubjectNode];
         
         [self setIsAcyclic:YES];
     }

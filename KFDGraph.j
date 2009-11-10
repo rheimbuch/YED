@@ -2,34 +2,34 @@
 @import <Foundation/CPSet.j>
 @import <Foundation/CPException.j>
 @import <Foundation/CPNotificationCenter.j>
-@import "KFDNode.j"
+@import "YEDNode.j"
 
 // Exceptions
-KFDGraphCannotCreateDirectedEdgeException = @"KFDGraphCannotCreateDirectedEdgeException";
-KFDGraphNodeTypeNotAllowedException = @"KFDGraphNodeTypeNotAllowedException";
+YEDGraphCannotCreateDirectedEdgeException = @"YEDGraphCannotCreateDirectedEdgeException";
+YEDGraphNodeTypeNotAllowedException = @"YEDGraphNodeTypeNotAllowedException";
 
 // Notifications
-KFDGraphNodeAddedNotification = @"KFDGraphNodeAddedNotification";
-KFDGraphNodeRemovedNotification = @"KFDGraphNodeRemovedNotification";
-KFDGraphEdgeNotAllowedNotification = @"KFDGraphEdgeNotAllowedNotification";
-KFDGraphEdgeWouldCauseCycleNotification = @"KFDGraphEdgeWouldCauseCycleNotification";
-KFDGraphEdgeAddedNotification = @"KFDGraphEdgeAddedNotification";
-KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
+YEDGraphNodeAddedNotification = @"YEDGraphNodeAddedNotification";
+YEDGraphNodeRemovedNotification = @"YEDGraphNodeRemovedNotification";
+YEDGraphEdgeNotAllowedNotification = @"YEDGraphEdgeNotAllowedNotification";
+YEDGraphEdgeWouldCauseCycleNotification = @"YEDGraphEdgeWouldCauseCycleNotification";
+YEDGraphEdgeAddedNotification = @"YEDGraphEdgeAddedNotification";
+YEDGraphEdgeRemovedNotification = @"YEDGraphEdgeRemovedNotification"
 
-/*! @class KFDGraph
+/*! @class YEDGraph
     ** Delegate Protocol **
-    - (void)willAddNode:(KFDNode)aNode toGraph:(KFDGraph)aGraph
-    - (void)didAddNode(KFDNode)aNode toGraph:(KFDGraph)aGraph
-    - (void)willRemoveNode:(KFDNode)aNode fromGraph:(KFDGraph)aGraph
-    - (void)didRemoveNode:(KFDNode)aNode fromGraph:(KFDGraph)aGraph
-    - (void)willAddEdgeFromNode:(KFDNode)startNode toNode:(KFDNode)endNode inGraph:(KFDGraph)aGraph
-    - (void)didAddEdge:(BOOL)edgeAdded fromNode:(KFDNode)startNode toNode:(KFDNode)endNode inGraph:(KFDGraph)aGraph
-    - (void)willRemoveEdgeFromNode:(KFDNode)startNode toNode:(KFDNode)endNode inGraph:(KFDGraph)aGraph
-    - (void)didRemoveEdge:(BOOL)edgeRemoved fromNode:(KFDNode)startNode toNode:(KFDNode)endNode inGraph:(KFDGraph)aGraph
+    - (void)willAddNode:(YEDNode)aNode toGraph:(YEDGraph)aGraph
+    - (void)didAddNode(YEDNode)aNode toGraph:(YEDGraph)aGraph
+    - (void)willRemoveNode:(YEDNode)aNode fromGraph:(YEDGraph)aGraph
+    - (void)didRemoveNode:(YEDNode)aNode fromGraph:(YEDGraph)aGraph
+    - (void)willAddEdgeFromNode:(YEDNode)startNode toNode:(YEDNode)endNode inGraph:(YEDGraph)aGraph
+    - (void)didAddEdge:(BOOL)edgeAdded fromNode:(YEDNode)startNode toNode:(YEDNode)endNode inGraph:(YEDGraph)aGraph
+    - (void)willRemoveEdgeFromNode:(YEDNode)startNode toNode:(YEDNode)endNode inGraph:(YEDGraph)aGraph
+    - (void)didRemoveEdge:(BOOL)edgeRemoved fromNode:(YEDNode)startNode toNode:(YEDNode)endNode inGraph:(YEDGraph)aGraph
 
 */
 
-@implementation KFDGraph : CPObject
+@implementation YEDGraph : CPObject
 {
     CPSet   nodes       @accessors;
     CPSet   allowedNodeTypes;
@@ -43,7 +43,7 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
     if(self)
     {
         nodes = [CPSet set];
-        allowedNodeTypes = [CPSet setWithObject:KFDNode];
+        allowedNodeTypes = [CPSet setWithObject:YEDNode];
     }
     return self;
 }
@@ -74,7 +74,7 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
     return [[self alloc] initWithNodes:nodes];
 }
 
-- (void)addNode:(KFDNode)aNode
+- (void)addNode:(YEDNode)aNode
 {
     if([self allowsNode:aNode]) 
     {
@@ -84,7 +84,7 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
         [nodes addObject:aNode];
         
         [[CPNotificationCenter defaultCenter] 
-            postNotificationName:KFDGraphNodeAddedNotification
+            postNotificationName:YEDGraphNodeAddedNotification
             object:self
             userInfo:[CPDictionary dictionaryWithJSObject:{
                 node:aNode
@@ -95,11 +95,11 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
     }
     else 
     {
-        [CPException raise:KFDGraphNodeTypeNotAllowedException message:"The type of the added node is not allowed in this graph."];
+        [CPException raise:YEDGraphNodeTypeNotAllowedException message:"The type of the added node is not allowed in this graph."];
     }
 }
 
-- (void)removeNode:(KFDNode)aNode
+- (void)removeNode:(YEDNode)aNode
 {
     if([nodes containsObject:aNode])
     {
@@ -125,7 +125,7 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
         [nodes removeObject:aNode];
         
         [[CPNotificationCenter defaultCenter] 
-            postNotificationName:KFDGraphNodeRemovedNotification
+            postNotificationName:YEDGraphNodeRemovedNotification
             object:self
             userInfo:[CPDictionary dictionaryWithJSObject:{
                 node:aNode
@@ -136,7 +136,7 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
     }
 }
 
-- (void)createDirectedEdgeFrom:(KFDNode)fromNode to:(KFDNode)toNode
+- (void)createDirectedEdgeFrom:(YEDNode)fromNode to:(YEDNode)toNode
 { 
     // if(![nodes containsObject:fromNode])
     //     [self addNode:fromNode];
@@ -147,7 +147,7 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
     // If the nodes aren't in the nodes set, then they aren't allowed
     if(![nodes containsObject:fromNode] || ![nodes containsObject:toNode])
     {
-        [CPException raise:KFDGraphCannotCreateDirectedEdgeException reason:"One of the nodes is not in the graph."];
+        [CPException raise:YEDGraphCannotCreateDirectedEdgeException reason:"One of the nodes is not in the graph."];
         return;
     }
         
@@ -160,13 +160,13 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
     }
     catch(err)
     {
-        if([err name] === KFDNodeNotAllowedException)
+        if([err name] === YEDNodeNotAllowedException)
         {
             if([delegate respondsToSelector:@selector(directedEdgeFromNode:toNode:isNotAllowedInGraph:)])
                 [delegate directedEdgeFromNode:fromNode toNode:toNode isNotAllowedInGraph:self];
             
             [[CPNotificationCenter defaultCenter] 
-                postNotificationName:KFDGraphEdgeNotAllowedNotification
+                postNotificationName:YEDGraphEdgeNotAllowedNotification
                 object:self
                 userInfo:[CPDictionary dictionaryWithJSObject:{
                     fromNode:fromNode,
@@ -184,7 +184,7 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
                 [delegate directedEdgeFromNode:fromNode toNode:toNode wouldIntroduceCycleInGraph:self];
             
             [[CPNotificationCenter defaultCenter] 
-                postNotificationName:KFDGraphEdgeWouldCauseCycleNotification
+                postNotificationName:YEDGraphEdgeWouldCauseCycleNotification
                 object:self
                 userInfo:[CPDictionary dictionaryWithJSObject:{
                     fromNode:fromNode,
@@ -207,7 +207,7 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
         [delegate didAddEdge:YES fromNode:fromNode toNode:toNode inGraph:self];
     
     [[CPNotificationCenter defaultCenter] 
-        postNotificationName:KFDGraphEdgeAddedNotification
+        postNotificationName:YEDGraphEdgeAddedNotification
         object:self
         userInfo:[CPDictionary dictionaryWithJSObject:{
             fromNode:fromNode,
@@ -215,7 +215,7 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
         }]];
 }
 
-- (void)removeDirectedEdgeFrom:(KFDNode)fromNode to:(KFDNode)toNode
+- (void)removeDirectedEdgeFrom:(YEDNode)fromNode to:(YEDNode)toNode
 {
     // Only remove the edge if both nodes are in the graph
     if(![nodes containsObject:fromNode] || ![nodes containsObject:toNode])
@@ -230,7 +230,7 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
         [delegate didRemoveEdge:YES fromNode:fromNode toNode:toNode inGraph:self];
     
     [[CPNotificationCenter defaultCenter] 
-        postNotificationName:KFDGraphEdgeRemovedNotification
+        postNotificationName:YEDGraphEdgeRemovedNotification
         object:self
         userInfo:[CPDictionary dictionaryWithJSObject:{
             fromNode:fromNode,
@@ -238,17 +238,17 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
         }]];
 }
 
-- (BOOL)containsNode:(KFDNode)aNode
+- (BOOL)containsNode:(YEDNode)aNode
 {
     return [nodes containsObject:aNode];
 }
 
-- (BOOL)containsEdgeFromNode:(KFDNode)startNode toNode:endNode
+- (BOOL)containsEdgeFromNode:(YEDNode)startNode toNode:endNode
 {
     return [startNode hasOutgoingEdgeTo:endNode];
 }
 
-- (void)allowsNode:(KFDNode)aNode
+- (void)allowsNode:(YEDNode)aNode
 {
     var isAllowed = NO,
         allowedNodeTypeIter = [allowedNodeTypes objectEnumerator],

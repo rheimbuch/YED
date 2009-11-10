@@ -3,8 +3,8 @@
 @import <Foundation/CPException.j>
 
 // Constants
-KFDNodeCycleException = "KFDNodeCycleException";
-KFDNodeNotAllowedException = "KFDNodeNotAllowedException";
+YEDNodeCycleException = "YEDNodeCycleException";
+YEDNodeNotAllowedException = "YEDNodeNotAllowedException";
 
 /*
  * Performs a depth-first-search of an edge set,
@@ -12,9 +12,9 @@ KFDNodeNotAllowedException = "KFDNodeNotAllowedException";
  *  encountered more than once, then a cycle has 
  *  been found.
  */
-KFDNodeGraphHasCycles = function(aNode, traverseParents) 
+YEDNodeGraphHasCycles = function(aNode, traverseParents) 
 {
-    CPLog.trace("KFDNodeGraphHasCycles: Testing for cycles starting at %s", [aNode name]);
+    CPLog.trace("YEDNodeGraphHasCycles: Testing for cycles starting at %s", [aNode name]);
     traverseParents = traverseParents || NO;
     var stack = []
     function isAcyclic(node)
@@ -24,14 +24,14 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
             return false;
         }
         stack.push(node);
-        CPLog.trace("KFDNodeGraphHasCycles: at node %s", [node name]);
+        CPLog.trace("YEDNodeGraphHasCycles: at node %s", [node name]);
         
         var targetNode = nil;
         var nodeIter = traverseParents ? [[node inEdges] objectEnumerator] : 
                                          [[node outEdges] objectEnumerator];
         
-        traverseParents ? CPLog.trace("KFDNodeGraphHasCycles: Traversing inEdges") : 
-                          CPLog.trace("KFDNodeGraphHasCycles: Travering outEdges");
+        traverseParents ? CPLog.trace("YEDNodeGraphHasCycles: Traversing inEdges") : 
+                          CPLog.trace("YEDNodeGraphHasCycles: Travering outEdges");
         
         while(targetNode = [nodeIter nextObject])
         {
@@ -45,11 +45,11 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     }
     
     var result = isAcyclic(aNode);
-    CPLog.trace("KFDNodeGraphHasCycles: Graph staring at %s is acyclic: %s", [aNode name], result);
+    CPLog.trace("YEDNodeGraphHasCycles: Graph staring at %s is acyclic: %s", [aNode name], result);
     return !result;
 };
 
-@implementation KFDNode : CPObject
+@implementation YEDNode : CPObject
 {
     CPString    name                    @accessors;
     CPSet       outEdges                @accessors(readonly);
@@ -122,7 +122,7 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     return [self isEqualToNode:other];
 }
 
-- (BOOL)isEqualToNode:(KFDNode)otherNode
+- (BOOL)isEqualToNode:(YEDNode)otherNode
 {
     if(otherNode === self)
         return YES;
@@ -137,17 +137,17 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     return YES;
 }
 
-- (BOOL)hasOutgoingEdgeTo:(KFDNode)otherNode
+- (BOOL)hasOutgoingEdgeTo:(YEDNode)otherNode
 {
     return [outEdges containsObject:otherNode];
 }
 
-- (BOOL)hasIncomingEdgeFrom:(KFDNode)otherNode
+- (BOOL)hasIncomingEdgeFrom:(YEDNode)otherNode
 {
     return [otherNode hasOutgoingEdgeTo:self];
 }
 
-- (void)directedEdgeTo:(KFDNode)otherNode
+- (void)directedEdgeTo:(YEDNode)otherNode
 {
     if([self canConnectTo:otherNode])
     {
@@ -173,7 +173,7 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
                 [[self outEdges] removeObject:otherNode];
                 [[otherNode inEdges] removeObject:self];
                 
-                [CPException raise:KFDNodeCycleException reason:"Connecting the node would introduce a cycle."];
+                [CPException raise:YEDNodeCycleException reason:"Connecting the node would introduce a cycle."];
             }
             
         }
@@ -181,17 +181,17 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     else
     {
         CPLog.warn("directedEdgeTo: %s not allowed to connect to %s", [self name], [otherNode name]);      
-        [CPException raise:KFDNodeNotAllowedException reason:"Node is not allowed to be added."];
+        [CPException raise:YEDNodeNotAllowedException reason:"Node is not allowed to be added."];
     }
 }
 
-- (void)directedEdgeFrom:(KFDNode)otherNode
+- (void)directedEdgeFrom:(YEDNode)otherNode
 {
     [otherNode directedEdgeTo:self];
 }
 
 
-- (void)removeDirectedEdgeTo:(KFDNode)otherNode
+- (void)removeDirectedEdgeTo:(YEDNode)otherNode
 {       
     [[self outEdges] removeObject:otherNode];
     [[otherNode inEdges] removeObject:self];
@@ -216,9 +216,9 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
 
 /*
  * Is the node allowed to connect to another node.
- * By default all KFDNodes can connect to any other node.
+ * By default all YEDNodes can connect to any other node.
  */
-- (BOOL)canConnectTo:(KFDNode)otherNode
+- (BOOL)canConnectTo:(YEDNode)otherNode
 {
     var allowTo = false;
     var allowToIter = [allowsConnectionsTo objectEnumerator];
@@ -245,7 +245,7 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
     return allowTo && allowFrom;
 }
 
-- (BOOL)canRecieveConnectionFrom:(KFDNode)otherNode
+- (BOOL)canRecieveConnectionFrom:(YEDNode)otherNode
 {
     return [otherNode canConnectTo:self];
 }
@@ -268,12 +268,12 @@ KFDNodeGraphHasCycles = function(aNode, traverseParents)
 
 - (BOOL)cycleInDescendents
 {
-    return KFDNodeGraphHasCycles(self,NO);
+    return YEDNodeGraphHasCycles(self,NO);
 }
 
 - (BOOL)cycleInParents
 {
-    return KFDNodeGraphHasCycles(self,YES);
+    return YEDNodeGraphHasCycles(self,YES);
 }
 
 

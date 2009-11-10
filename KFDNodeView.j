@@ -4,12 +4,12 @@
 
 @import "CPBox+CPCoding.j"
 @import "CPView+OffsetCorners.j"
-@import "KFDEditorView.j"
-@import "KFDNode.j"
+@import "YEDEditorView.j"
+@import "YEDNode.j"
 
-@implementation KFDNodeView : CPView
+@implementation YEDNodeView : CPView
 {
-    KFDNode     representedObject       @accessors;
+    YEDNode     representedObject       @accessors;
     CPView      contentView;
     CPTextField nameField;
     CPView      decorator;
@@ -27,7 +27,7 @@
                                                         CPRectGetHeight(aFrame)))];
         [decorator setAutoresizingMask:(CPViewWidthSizable | CPViewHeightSizable)];
         [decorator setBorderType:CPLineBorder];
-        console.debug("KFDNodeView decorator box");
+        console.debug("YEDNodeView decorator box");
         console.debug(decorator);
         [self addSubview:decorator];
         
@@ -50,12 +50,12 @@
         
         
         [self setPostsFrameChangedNotifications:YES];
-        // representedObject = [KFDNode node];
+        // representedObject = [YEDNode node];
     }
     return self;
 }
 
-- (id)initWithNode:(KFDNode)aNode
+- (id)initWithNode:(YEDNode)aNode
 {
     self = [self initWithFrame:CPRectMakeZero()];
     if(self)
@@ -106,7 +106,7 @@
 - (void)mouseDown:(CPEvent)anEvent
 {
     dragLocation = [anEvent locationInWindow];
-    [[KFDEditorView sharedEditor] setNodeView:self];
+    [[YEDEditorView sharedEditor] setNodeView:self];
 }
 
 - (void)mouseDragged:(CPEvent)anEvent
@@ -123,20 +123,20 @@
 
 @end
 
-var KFDNodeViewContentViewKey   = @"KFDNodeViewContentViewKey",
-    KFDNodeViewNameFieldKey     = @"KFDNodeViewNameFieldKey",
-    KFDNodeViewDecoratorKey     = @"KFDNodeViewDecoratorKey";
+var YEDNodeViewContentViewKey   = @"YEDNodeViewContentViewKey",
+    YEDNodeViewNameFieldKey     = @"YEDNodeViewNameFieldKey",
+    YEDNodeViewDecoratorKey     = @"YEDNodeViewDecoratorKey";
 
-@implementation KFDNodeView (CPCoding)
+@implementation YEDNodeView (CPCoding)
 
 - (id)initWithCoder:(CPCoder)coder
 {
     self = [super initWithCoder:coder];
     if(self)
     {
-        contentView = [coder decodeObjectForKey:KFDNodeViewContentViewKey];
-        nameField   = [coder decodeObjectForKey:KFDNodeViewNameFieldKey];
-        decorator   = [coder decodeObjectForKey:KFDNodeViewDecoratorKey];
+        contentView = [coder decodeObjectForKey:YEDNodeViewContentViewKey];
+        nameField   = [coder decodeObjectForKey:YEDNodeViewNameFieldKey];
+        decorator   = [coder decodeObjectForKey:YEDNodeViewDecoratorKey];
         
         [self setPostsFrameChangedNotifications:YES];
     }
@@ -147,14 +147,14 @@ var KFDNodeViewContentViewKey   = @"KFDNodeViewContentViewKey",
 {
     [super encodeWithCoder:coder];
     
-    [coder encodeObject:contentView forKey:KFDNodeViewContentViewKey];
-    [coder encodeObject:nameField forKey:KFDNodeViewNameFieldKey];
-    [coder encodeObject:decorator forKey:KFDNodeViewDecoratorKey];
+    [coder encodeObject:contentView forKey:YEDNodeViewContentViewKey];
+    [coder encodeObject:nameField forKey:YEDNodeViewNameFieldKey];
+    [coder encodeObject:decorator forKey:YEDNodeViewDecoratorKey];
 }
     
 @end
 
-@implementation KFDNodeView (DecoratorProtocol)
+@implementation YEDNodeView (DecoratorProtocol)
     - (CPColor)borderColor
     {
         if([decorator respondsToSelector:@selector(borderColor)])

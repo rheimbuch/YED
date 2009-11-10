@@ -1,13 +1,13 @@
-@import "../KFDNode.j"
+@import "../YEDNode.j"
 
 // CPLogRegister(CPLogPrint);
 
-@implementation KFDNodeTest : OJTestCase
+@implementation YEDNodeTest : OJTestCase
 
-- (void)testKFDNodeCanConnectToAnotherKFDNode
+- (void)testYEDNodeCanConnectToAnotherYEDNode
 {
-    var node1 = [KFDNode nodeWithName:"node1"];
-    var node2 = [KFDNode nodeWithName:"node2"];
+    var node1 = [YEDNode nodeWithName:"node1"];
+    var node2 = [YEDNode nodeWithName:"node2"];
     [self assertTrue:([node1 canConnectTo:node2])
           message:"node1 should be able to connect to node2"];
     
@@ -15,19 +15,19 @@
           message:"node2 should be able to connect to node1"];
 }
 
-- (void)testKFDNodeAllDescendents
+- (void)testYEDNodeAllDescendents
 {
     // Create nodes
-    var n1 = [KFDNode nodeWithName:"n1"],
-        n2 = [KFDNode nodeWithName:"n2"],
-        n3 = [KFDNode nodeWithName:"n3"],
-        n4 = [KFDNode nodeWithName:"n4"],
-        n5 = [KFDNode nodeWithName:"n5"],
-        n6 = [KFDNode nodeWithName:"n6"],
-        n7 = [KFDNode nodeWithName:"n7"];
+    var n1 = [YEDNode nodeWithName:"n1"],
+        n2 = [YEDNode nodeWithName:"n2"],
+        n3 = [YEDNode nodeWithName:"n3"],
+        n4 = [YEDNode nodeWithName:"n4"],
+        n5 = [YEDNode nodeWithName:"n5"],
+        n6 = [YEDNode nodeWithName:"n6"],
+        n7 = [YEDNode nodeWithName:"n7"];
         
-    //Construct Graph (See ./KFDNodeTestGraph.dot)
-                            // digraph KFDNodeTest
+    //Construct Graph (See ./YEDNodeTestGraph.dot)
+                            // digraph YEDNodeTest
                             // {
     [n1 directedEdgeTo:n2]; //  n1 -> n2
     [n1 directedEdgeTo:n3]; //  n1 -> n3
@@ -64,50 +64,50 @@
           message:"n7 should have no nodes as descendents"];
 }
 
-- (void)testKFDNodeGraphHasCyclesFunctionDetectsSimpleCycles
+- (void)testYEDNodeGraphHasCyclesFunctionDetectsSimpleCycles
 {
-    var n1 = [KFDNode nodeWithName:"n1"],
-        n2 = [KFDNode nodeWithName:"n2"];
+    var n1 = [YEDNode nodeWithName:"n1"],
+        n2 = [YEDNode nodeWithName:"n2"];
     
     // simplest acyclical graph
     [n1 directedEdgeTo:n2];
-    [self assertFalse:KFDNodeGraphHasCycles(n1)
+    [self assertFalse:YEDNodeGraphHasCycles(n1)
             message:"Starting at n1, cycle between n1, n2 SHOULD NOT be detected"];
-    [self assertFalse:KFDNodeGraphHasCycles(n2)
+    [self assertFalse:YEDNodeGraphHasCycles(n2)
             message:"Starting at n2, cycle between n1, n2 SHOULD NOT be detected"];
     
-    [self assertFalse:KFDNodeGraphHasCycles(n1,YES) //Reverse search for cycles through inEdges
+    [self assertFalse:YEDNodeGraphHasCycles(n1,YES) //Reverse search for cycles through inEdges
             message:"Starting at n1, cycle between n1, n2 SHOULD NOT be detected"];
-    [self assertFalse:KFDNodeGraphHasCycles(n2,YES) //Reverse search for cycles through inEdges
+    [self assertFalse:YEDNodeGraphHasCycles(n2,YES) //Reverse search for cycles through inEdges
             message:"Starting at n2, cycle between n1, n2 SHOULD NOT be detected"];
     
     // Now create a cycle
     [n2 directedEdgeTo:n1];
     
-    [self assertTrue:KFDNodeGraphHasCycles(n1)
+    [self assertTrue:YEDNodeGraphHasCycles(n1)
             message:"Starting at n1, cycle between n1, n2 SHOULD be detected"];
-    [self assertTrue:KFDNodeGraphHasCycles(n2)
+    [self assertTrue:YEDNodeGraphHasCycles(n2)
             message:"Starting at n2, cycle between n1, n2 SHOULD be detected"];
             
-    [self assertTrue:KFDNodeGraphHasCycles(n1,YES) //Search for cycles through inEdges
+    [self assertTrue:YEDNodeGraphHasCycles(n1,YES) //Search for cycles through inEdges
             message:"Starting at n1, cycle between n1, n2 SHOULD be detected"];
-    [self assertTrue:KFDNodeGraphHasCycles(n2,YES) //Search for cycles through inEdges
+    [self assertTrue:YEDNodeGraphHasCycles(n2,YES) //Search for cycles through inEdges
             message:"Starting at n2, cycle between n1, n2 SHOULD be detected"];
 }
 
-- (void)testKFDNodeGraphHasCyclesFunctionDetectsComplexCycles
+- (void)testYEDNodeGraphHasCyclesFunctionDetectsComplexCycles
 {
     // Create nodes
-    var n1 = [KFDNode nodeWithName:"n1"],
-        n2 = [KFDNode nodeWithName:"n2"],
-        n3 = [KFDNode nodeWithName:"n3"],
-        n4 = [KFDNode nodeWithName:"n4"],
-        n5 = [KFDNode nodeWithName:"n5"],
-        n6 = [KFDNode nodeWithName:"n6"],
-        n7 = [KFDNode nodeWithName:"n7"];
+    var n1 = [YEDNode nodeWithName:"n1"],
+        n2 = [YEDNode nodeWithName:"n2"],
+        n3 = [YEDNode nodeWithName:"n3"],
+        n4 = [YEDNode nodeWithName:"n4"],
+        n5 = [YEDNode nodeWithName:"n5"],
+        n6 = [YEDNode nodeWithName:"n6"],
+        n7 = [YEDNode nodeWithName:"n7"];
         
     //Construct Graph with cycles
-                            // digraph KFDNodeTestCycles
+                            // digraph YEDNodeTestCycles
                             // {
     [n1 directedEdgeTo:n2]; //  n1 -> n2
     [n1 directedEdgeTo:n3]; //  n1 -> n3
@@ -122,17 +122,17 @@
                             // }
     
     //Starting at n1 we should detect a cycle
-    [self assertTrue:KFDNodeGraphHasCycles(n1)
+    [self assertTrue:YEDNodeGraphHasCycles(n1)
             message:"Starting at n1, cycle should be detected"];
-    [self assertTrue:KFDNodeGraphHasCycles(n7)
+    [self assertTrue:YEDNodeGraphHasCycles(n7)
             message:"Starting at n7, cycle should be detected"];
 }
 
-- (void)testKFDNodeCyclePrevention
+- (void)testYEDNodeCyclePrevention
 {
-    var n1 = [KFDNode acyclicNodeWithName:"n1"],
-        n2 = [KFDNode acyclicNodeWithName:"n2"],
-        n3 = [KFDNode acyclicNodeWithName:"n3"];
+    var n1 = [YEDNode acyclicNodeWithName:"n1"],
+        n2 = [YEDNode acyclicNodeWithName:"n2"],
+        n3 = [YEDNode acyclicNodeWithName:"n3"];
     
     // Setup acyclic graph
     

@@ -1,29 +1,29 @@
 @import <AppKit/AppKit.j>
-@import "../KFDNodeViewRegistry.j"
-@import "../KFDNode.j"
-@import "../KFDNodeView.j"
+@import "../YEDNodeViewRegistry.j"
+@import "../YEDNode.j"
+@import "../YEDNodeView.j"
 
 CPLogRegister(CPLogPrint);
 
-@implementation KFDNodeViewRegistryTest : OJTestCase
+@implementation YEDNodeViewRegistryTest : OJTestCase
 
 - (void)testRegisterAndRetrieveView
 {
     CPLog.trace("Creating registry and protoView");
-    var registry = [[KFDNodeViewRegistry alloc] init];
-    var protoView = [[KFDNodeView alloc] init];
+    var registry = [[YEDNodeViewRegistry alloc] init];
+    var protoView = [[YEDNodeView alloc] init];
     
-    CPLog.trace("Registering protoView for KFDNode");
-    [registry registerPrototype:protoView for:KFDNode];
+    CPLog.trace("Registering protoView for YEDNode");
+    [registry registerPrototype:protoView for:YEDNode];
     
-    CPLog.trace("Retrieving view for KFDNode");
-    var newView = [registry viewFor:KFDNode];
+    CPLog.trace("Retrieving view for YEDNode");
+    var newView = [registry viewFor:YEDNode];
     
     [self assertTrue:(newView)
         message:"newView should have been retrieved"];
     
-    [self assertTrue:([newView class] === KFDNodeView)
-        message:"newView should be a KFDNodeView"];
+    [self assertTrue:([newView class] === YEDNodeView)
+        message:"newView should be a YEDNodeView"];
     
     [self assertFalse:([newView isEqual:protoView])
         message:"newView should not be exactly the same object as protoView"];

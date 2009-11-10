@@ -1,12 +1,12 @@
-@import "../KFDGraph.j"
+@import "../YEDGraph.j"
 
-@implementation KFDGraphTest : OJTestCase
+@implementation YEDGraphTest : OJTestCase
 
-- (void)testKFDGraphShouldAllowKFDNodes
+- (void)testYEDGraphShouldAllowYEDNodes
 {
-    var graph = [KFDGraph graph],
-        n1 = [KFDNode nodeWithName:"n1"],
-        n2 = [KFDNode nodeWithName:"n2"];
+    var graph = [YEDGraph graph],
+        n1 = [YEDNode nodeWithName:"n1"],
+        n2 = [YEDNode nodeWithName:"n2"];
         
     [self assertTrue:([graph allowsNode:n1])
             message:"Graph should allow n1"];
@@ -26,10 +26,10 @@
 
 - (void)testCreateDirectedEdge
 {
-    var graph = [KFDGraph graph],
-        n1 = [KFDNode nodeWithName:"n1"],
-        n2 = [KFDNode nodeWithName:"n2"],
-        n3 = [KFDNode nodeWithName:"n3"];
+    var graph = [YEDGraph graph],
+        n1 = [YEDNode nodeWithName:"n1"],
+        n2 = [YEDNode nodeWithName:"n2"],
+        n3 = [YEDNode nodeWithName:"n3"];
         
     // Add n1 and n2 to graph
     [graph addNode:n1];

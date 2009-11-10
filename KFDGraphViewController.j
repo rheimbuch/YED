@@ -1,12 +1,12 @@
 @import <AppKit/CPViewController.j>
-@import "KFDGraph.j"
-@import "KFDGraphView.j"
-@import "KFDNodeViewRegistry.j"
+@import "YEDGraph.j"
+@import "YEDGraphView.j"
+@import "YEDNodeViewRegistry.j"
 
-@implementation KFDGraphViewController : CPViewController 
+@implementation YEDGraphViewController : CPViewController 
 {
     CPArray                 nodeViews;
-    KFDNodeViewRegistry     nodeViewRegistry    @accessors;
+    YEDNodeViewRegistry     nodeViewRegistry    @accessors;
     CPArray                 edgeViews;
 }
 
@@ -16,7 +16,7 @@
     if(self)
     {
         nodeViews = [];
-        nodeViewRegistry = [KFDNodeViewRegistry registry];
+        nodeViewRegistry = [YEDNodeViewRegistry registry];
         edgeViews = [];
     }
     return self;
@@ -24,7 +24,7 @@
 
 // - (void)loadRepresentedObject
 // {
-//     [self setRepresentedObject: [KFDGraph graph]];
+//     [self setRepresentedObject: [YEDGraph graph]];
 // }
 
 - (void)loadView
@@ -32,7 +32,7 @@
     if(_view)
         return;
     
-    _view = [[KFDGraphView alloc] init];
+    _view = [[YEDGraphView alloc] init];
 }
 
 - (void)_loadNodeViewsFromGraph
@@ -70,19 +70,19 @@
     
     [center addObserver:self 
             selector:@selector(graphNodeAdded:) 
-            name:KFDGraphNodeAddedNotification
+            name:YEDGraphNodeAddedNotification
             object:graph];
     [center addObserver:self
             selector:@selector(graphNodeRemoved:)
-            name:KFDGraphNodeRemovedNotification
+            name:YEDGraphNodeRemovedNotification
             object:graph];
     [center addObserver:self
             selector:@selector(graphEdgeAdded:)
-            name:KFDGraphEdgeAddedNotification
+            name:YEDGraphEdgeAddedNotification
             object:graph];
     [center addObserver:self
             selector:@selector(graphEdgeRemoved:)
-            name:KFDGraphEdgeRemovedNotification
+            name:YEDGraphEdgeRemovedNotification
             object:graph];
 }
 
@@ -92,16 +92,16 @@
     var graph = [self representedObject];
     
     [center removeObserver:self
-            name:KFDGraphNodeAddedNotification
+            name:YEDGraphNodeAddedNotification
             object:graph];
     [center removeObserver:self
-            name:KFDGraphNodeRemovedNotification
+            name:YEDGraphNodeRemovedNotification
             object:graph];
     [center removeObserver:self
-            name:KFDGraphEdgeAddedNotification
+            name:YEDGraphEdgeAddedNotification
             object:graph];
     [center removeObserver:self
-            name:KFDGraphEdgeRemovedNotification
+            name:YEDGraphEdgeRemovedNotification
             object:graph];
 }
 
@@ -119,7 +119,7 @@
 
 - (void)graphEdgeAdded:(CPNotification)notification
 {
-    CPLog.trace("KFDGraphViewController: graphEdgeAdded");
+    CPLog.trace("YEDGraphViewController: graphEdgeAdded");
     var startNode = [[notification userInfo] objectForKey:"fromNode"],
         endNode = [[notification userInfo] objectForKey:"toNode"];
     [self addEdgeToViewFrom:startNode to:endNode];
@@ -127,13 +127,13 @@
 
 - (void)graphEdgeRemoved:(CPNotification)notification
 {
-    CPLog.trace("KFDGraphViewController: graphEdgeRemoved");
+    CPLog.trace("YEDGraphViewController: graphEdgeRemoved");
     var startNode = [[notification userInfo] objectForKey:"fromNode"],
         endNode = [[notification userInfo] objectForKey:"toNode"];
     [self removeEdgeFromViewFrom:startNode to:endNode];
 }
 
-- (void)addNodeToView:(KFDNode)node
+- (void)addNodeToView:(YEDNode)node
 {
     // If the node isn't already in the graph, we don't want to add it to the view
     if(![[self graph] containsNode:node])
@@ -157,7 +157,7 @@
     [[self view] addNodeView:view];
 }
 
-- (void)removeNodeFromView:(KFDNode)node
+- (void)removeNodeFromView:(YEDNode)node
 {
     // If the node is still in the graph, we don't want to remove it from the view
     if([[self graph] containsNode:node])
@@ -178,7 +178,7 @@
     }
 }
 
-- (KFDNodeView)viewForNode:(KFDNode)node
+- (YEDNodeView)viewForNode:(YEDNode)node
 {
     if(![[self graph] containsNode:node])
         return;
@@ -194,28 +194,28 @@
     }
 }
 
-- (void)addEdgeToViewFrom:(KFDNode)start to:(KFDNode)end
+- (void)addEdgeToViewFrom:(YEDNode)start to:(YEDNode)end
 {
-    CPLog.trace("KFDGraphViewController: addEdgeToViewFrom:to:");
+    CPLog.trace("YEDGraphViewController: addEdgeToViewFrom:to:");
     console.debug(start, end);
     CPLog.trace([[self graph] containsEdgeFromNode:start toNode:end]);
     if(![[self graph] containsEdgeFromNode:start toNode:end])
         return;
     
-    CPLog.trace("KFDGraphViewController: addEdgeToViewFrom:to: retrieving views");
+    CPLog.trace("YEDGraphViewController: addEdgeToViewFrom:to: retrieving views");
     var startView = [self viewForNode:start],
         endView = [self viewForNode:end];
     
     if(!startView || !endView)
         return;
     
-    CPLog.trace("KFDGraphViewController: addEdgeToViewFrom:to: creating Edge View");
-    var edgeView = [KFDEdgeView edgeFromView:startView toView:endView];
+    CPLog.trace("YEDGraphViewController: addEdgeToViewFrom:to: creating Edge View");
+    var edgeView = [YEDEdgeView edgeFromView:startView toView:endView];
     [edgeViews addObject:edgeView];
     [[self view] addEdgeView:edgeView];
 }
 
-- (void)removeEdgeFromViewFrom:(KFDNode)start to:(KFDNode)end
+- (void)removeEdgeFromViewFrom:(YEDNode)start to:(YEDNode)end
 {
     if([[self graph] containsEdgeFromNode:start toNode:end])
         return;
@@ -258,7 +258,7 @@
     return [self representedObject];
 }
 
-- (void)setGraph:(KFDGraph)aGraph
+- (void)setGraph:(YEDGraph)aGraph
 {
     [self willChangeValueForKey:@"graph"];
     [self setRepresentedObject:aGraph];

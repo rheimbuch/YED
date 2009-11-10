@@ -3,11 +3,11 @@
 @import <Foundation/CPKeyedArchiver.j>
 @import <Foundation/CPKeyedUnarchiver.j>
 
-@import "KFDNode.j"
+@import "YEDNode.j"
 
 var DefaultRegistry = nil;
 
-@implementation KFDNodeViewRegistry : CPObject
+@implementation YEDNodeViewRegistry : CPObject
 {
     CPDictionary       nodeViewPrototypes;
 }
@@ -43,12 +43,12 @@ var DefaultRegistry = nil;
 
 - (CPView)viewFor:(id)aNodeOrClass
 {
-    CPLog.trace("KFDNodeViewRegistry: finding view for " + [aNodeOrClass className]);
+    CPLog.trace("YEDNodeViewRegistry: finding view for " + [aNodeOrClass className]);
     var data = [nodeViewPrototypes objectForKey:[aNodeOrClass className]];
     if(data)
     {
         var view = [CPKeyedUnarchiver unarchiveObjectWithData:data];
-        if([aNodeOrClass isKindOfClass:KFDNode] && [aNodeOrClass respondsToSelector:@selector(isNode)] && [aNodeOrClass isNode])
+        if([aNodeOrClass isKindOfClass:YEDNode] && [aNodeOrClass respondsToSelector:@selector(isNode)] && [aNodeOrClass isNode])
         {
             [view setRepresentedObject:aNodeOrClass];
         }

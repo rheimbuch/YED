@@ -2,7 +2,7 @@
 @import <Foundation/CPNotificationCenter.j>
 
 @import "CPView+OffsetCorners.j"
-@import "KFDNodeView.j"
+@import "YEDNodeView.j"
 
 var SharedEditorView            = nil,
     HandleSize                  = 10.0,
@@ -20,9 +20,9 @@ var sloppyHandle = function(rect)
     return CGRectInset(rect, -HandleSlop, -HandleSlop);
 };
 
-@implementation KFDEditorView : CPView
+@implementation YEDEditorView : CPView
 {
-    KFDNodeView     nodeView        @accessors;
+    YEDNodeView     nodeView        @accessors;
     BOOL            isResizing;
     CGPoint         resizeLocation;
 }
@@ -30,7 +30,7 @@ var sloppyHandle = function(rect)
 + (id)sharedEditor
 {
     if(!SharedEditorView)
-        SharedEditorView = [[KFDEditorView alloc] initWithFrame:CPRectMakeZero()];
+        SharedEditorView = [[YEDEditorView alloc] initWithFrame:CPRectMakeZero()];
     return SharedEditorView;
 }
 
@@ -44,12 +44,12 @@ var sloppyHandle = function(rect)
     return self;
 }
 
-- (void)setNodeView:(KFDNodeView)aNodeView
+- (void)setNodeView:(YEDNodeView)aNodeView
 {
     if(nodeView === aNodeView)
         return;
     
-    CPLog.trace("KFDEditorView: setNodeView");
+    CPLog.trace("YEDEditorView: setNodeView");
     var center = [CPNotificationCenter defaultCenter];
     
     if(nodeView)
@@ -94,32 +94,32 @@ var sloppyHandle = function(rect)
 - (void)mouseDown:(CPEvent)event
 {
     var location = [self convertPoint:[event locationInWindow] fromView:nil];
-    // CPLog.trace("KFDEditorView: mouseDown");
+    // CPLog.trace("YEDEditorView: mouseDown");
     
     if(CGRectContainsPoint(sloppyHandle(topLeftHandle), location))
     {
-        // CPLog.trace("KFDEditorView: topLeftHandle");
+        // CPLog.trace("YEDEditorView: topLeftHandle");
         isResizing = YES;
         resizeLocation = [event locationInWindow];
         
     }
     else if(CGRectContainsPoint(sloppyHandle(topRightHandle), location))
     {
-        // CPLog.trace("KFDEditorView: topRightHandle");
+        // CPLog.trace("YEDEditorView: topRightHandle");
         isResizing = YES;
         resizeLocation = [event locationInWindow];
         
     }
     else if(CGRectContainsPoint(sloppyHandle(bottomRightHandle), location))
     {
-        // CPLog.trace("KFDEditorView: bottomRightHandle");
+        // CPLog.trace("YEDEditorView: bottomRightHandle");
         isResizing = YES;
         resizeLocation = [event locationInWindow];
         
     }
     else if(CGRectContainsPoint(sloppyHandle(bottomLeftHandle), location))
     {
-        // CPLog.trace("KFDEditorView: bottomLeftHandle");
+        // CPLog.trace("YEDEditorView: bottomLeftHandle");
         isResizing = YES;
         resizeLocation = [event locationInWindow];
         
@@ -141,7 +141,7 @@ var sloppyHandle = function(rect)
         dX = location.x - resizeLocation.x,
         dY = location.y - resizeLocation.y;
     
-    // CPLog.trace("KFDEditorView: mouseDragged");
+    // CPLog.trace("YEDEditorView: mouseDragged");
     // CPLog.trace("dX = " + dX);
     // CPLog.trace("dY = " + dY);
     

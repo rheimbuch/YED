@@ -1,4 +1,4 @@
-# digraph KFDNodeTest
+# digraph YEDNodeTest
 #   {
 #       n1 -> n2
 #       n1 -> n3
@@ -10,7 +10,7 @@
 #       n4 -> n7
 #   }
 	
-digraph KFDNodeTestCycles
+digraph YEDNodeTestCycles
 	{
 		n1 -> n2
 		n1 -> n3

@@ -2,7 +2,7 @@
 @import <AppKit/CPView.j>
 @import <Foundation/CPNotificationCenter.j>
 
-@import "KFDNodeView.j"
+@import "YEDNodeView.j"
 
 var intersectLineLine = function(a1, a2, b1, b2) 
 {
@@ -62,18 +62,18 @@ var intersectLineRect = function(a1, a2, rect) {
 var Padding = 20;
 
 
-@implementation KFDEdgeView : CPView
+@implementation YEDEdgeView : CPView
 {
-    KFDNodeView     startNodeView       @accessors;
-    KFDNodeView     endNodeView         @accessors;
+    YEDNodeView     startNodeView       @accessors;
+    YEDNodeView     endNodeView         @accessors;
 }
 
-+ (id)edgeFromView:(KFDNodeView)start toView:(KFDNodeView)end
++ (id)edgeFromView:(YEDNodeView)start toView:(YEDNodeView)end
 {
     return [[self alloc] initEdgeFromView:start toView:end];
 }
 
-- (id)initEdgeFromView:(KFDNodeView)start toView:(KFDNodeView)end
+- (id)initEdgeFromView:(YEDNodeView)start toView:(YEDNodeView)end
 {
     self = [self init];
     if(self)
@@ -84,7 +84,7 @@ var Padding = 20;
     return self;
 }
 
-- (void)setStartNodeView:(KFDNodeView)start
+- (void)setStartNodeView:(YEDNodeView)start
 {
     if(startNodeView === start)
         return;
@@ -122,7 +122,7 @@ var Padding = 20;
     }
 }
 
-- (void)setEndNodeView:(KFDNodeView)endView
+- (void)setEndNodeView:(YEDNodeView)endView
 {
     if(endNodeView === endView)
         return;
@@ -170,7 +170,7 @@ var Padding = 20;
 {
     if(!startNodeView || !endNodeView)
         return;
-    // CPLog.trace("KFDEdgeView: startNodeViewFrameChanged:");
+    // CPLog.trace("YEDEdgeView: startNodeViewFrameChanged:");
     var startCenter = [startNodeView center],
         endOrigin = [endNodeView center],
         delta = CGPointMake(endOrigin.x - startCenter.x, endOrigin.y - startCenter.y),
@@ -200,12 +200,12 @@ var Padding = 20;
 
 - (id)drawRect:(CGRect)rect
 {
-    // CPLog.trace("KFDEdgeView drawRect:");
+    // CPLog.trace("YEDEdgeView drawRect:");
     if(!startNodeView || !endNodeView)
         return;
     
     var rect = CPRectInset(rect, Padding, Padding);
-    // CPLog.trace("KFDEdgeView: drawing edge");
+    // CPLog.trace("YEDEdgeView: drawing edge");
     var startPoint = [self convertPoint:[startNodeView center] fromView:nil],
         endPoint = [self convertPoint:[endNodeView center] fromView:nil],
         context = [[CPGraphicsContext currentContext] graphicsPort];

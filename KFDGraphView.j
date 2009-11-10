@@ -1,11 +1,11 @@
 @import <AppKit/CPView.j>
 
-@implementation KFDGraphView : CPView
+@implementation YEDGraphView : CPView
 {
     id          controller                @accessors;
 }
 
-- (void)addNodeView:(KFDNodeView)aNodeView
+- (void)addNodeView:(YEDNodeView)aNodeView
 {
     if([[self subviews] containsObject:aNodeView])
         return;
@@ -13,14 +13,14 @@
     [self addSubview:aNodeView];
 }
 
-- (void)removeNodeView:(KFDNodeView)aNodeView
+- (void)removeNodeView:(YEDNodeView)aNodeView
 {
     if(![[self subviews] containsObject:aNodeView])
         return;
     [aNodeView removeFromSuperview];
 }
 
-- (void)addEdgeView:(KFDEdgeView)edgeView
+- (void)addEdgeView:(YEDEdgeView)edgeView
 {
     if([[self subviews] containsObject:edgeView])
         return;
@@ -28,7 +28,7 @@
     [self addSubview:edgeView];
 }
 
-- (void)removeEdgeView:(KFDEdgeView)edgeView
+- (void)removeEdgeView:(YEDEdgeView)edgeView
 {
     if(![[self subviews] containsObject:edgeView])
         return
@@ -49,7 +49,7 @@
 
 - (void)performDragOperation:(CPDraggingInfo)aSender
 {
-    var nodeView = [CPKeyedUnarchiver unarchiveObjectWithData:[[aSender draggingPasteboard] dataForType:KFDNodeViewDragType]],
+    var nodeView = [CPKeyedUnarchiver unarchiveObjectWithData:[[aSender draggingPasteboard] dataForType:YEDNodeViewDragType]],
         location = [self convertPoint:[aSender draggingLocation] fromView:nil];
         
     [nodeView setFrameOrigin:CGPointMake(location.x - CGRectGetWidth([nodeView frame])/2.0, location.y - CGRectGetHeight([nodeView frame])/2.0)];
@@ -60,7 +60,7 @@
 
 - (void)mouseDown:(CPEvent)anEvent
 {
-    [[KFDEditorView sharedEditor] setNodeView:nil];
+    [[YEDEditorView sharedEditor] setNodeView:nil];
 }
 
 @end
