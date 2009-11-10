@@ -2,8 +2,17 @@
 @import <Foundation/CPSet.j>
 @import "KFDNode.j"
 
-KFDGraphCannotCreateDirectedEdge = "KFDGraphCannotCreateDirectedEdge";
+// Exceptions
+KFDGraphCannotCreateDirectedEdgeException = @"KFDGraphCannotCreateDirectedEdgeException";
+KFDGraphNodeTypeNotAllowedException = @"KFDGraphNodeTypeNotAllowedException";
 
+// Notifications
+KFDGraphNodeAddedNotification = @"KFDGraphNodeAddedNotification";
+KFDGraphNodeRemovedNotification = @"KFDGraphNodeRemovedNotification";
+KFDGraphEdgeNotAllowedNotification = @"KFDGraphEdgeNotAllowedNotification";
+KFDGraphEdgeWouldCauseCycleNotification = @"KFDGraphEdgeWouldCauseCycleNotification";
+KFDGraphEdgeAddedNotification = @"KFDGraphEdgeAddedNotification";
+KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
 @implementation KFDGraph : CPObject
 {
     CPSet   nodes       @accessors;
