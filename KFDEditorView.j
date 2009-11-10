@@ -59,7 +59,7 @@ var sloppyHandle = function(rect)
                 object:nodeView];
     }
     
-    [self willChangeValueForKey:@"nodeView"]
+    [self willChangeValueForKey:@"nodeView"];
     nodeView = aNodeView;
     [self didChangeValueForKey:@"nodeView"];
     
