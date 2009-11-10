@@ -1,5 +1,6 @@
 @import <Foundation/CPObject.j>
 @import <Foundation/CPSet.j>
+@import <Foundation/CPException.j>
 
 // Constants
 KFDNodeCycleException = "KFDNodeCycleException";
