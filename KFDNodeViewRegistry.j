@@ -1,0 +1,59 @@
+@import <Foundation/CPObject.j>
+@import <Foundation/CPDictionary.j>
+@import <Foundation/CPKeyedArchiver.j>
+@import <Foundation/CPKeyedUnarchiver.j>
+
+@import "KFDNode.j"
+
+var DefaultRegistry = nil;
+
+@implementation KFDNodeViewRegistry : CPObject
+{
+    CPDictionary       nodeViewPrototypes;
+}
+
+- (id)init
+{
+    self = [super init];
+    if(self)
+    {
+        nodeViewPrototypes = [CPDictionary dictionary];
+    }
+    return self;
+}
+
++ (id)registry
+{
+   return [[self alloc] init];
+}
+
++ (id)defaultRegistry
+{
+    if(!DefaultRegistry)
+        DefaultRegistry = [[self alloc] init];
+    
+    return DefaultRegistry;
+}
+
+- (void)registerPrototype:(CPView)aView for:(id)aNodeOrClass
+{
+    var data = [CPKeyedArchiver archivedDataWithRootObject:aView];
+    [nodeViewPrototypes setObject:data forKey:[aNodeOrClass className]];
+}
+
+- (CPView)viewFor:(id)aNodeOrClass
+{
+    CPLog.trace("KFDNodeViewRegistry: finding view for " + [aNodeOrClass className]);
+    var data = [nodeViewPrototypes objectForKey:[aNodeOrClass className]];
+    if(data)
+    {
+        var view = [CPKeyedUnarchiver unarchiveObjectWithData:data];
+        if([aNodeOrClass isKindOfClass:KFDNode] && [aNodeOrClass respondsToSelector:@selector(isNode)] && [aNodeOrClass isNode])
+        {
+            [view setRepresentedObject:aNodeOrClass];
+        }
+        return view;
+    }
+}
+
+@end
