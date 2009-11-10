@@ -105,6 +105,21 @@ KFDGraphEdgeRemovedNotification = @"KFDGraphEdgeRemovedNotification"
     {
         if([delegate respondsToSelector:@selector(willRemoveNode:fromGraph:)])
             [delegate willRemoveNode:aNode fromGraph:self];
+        
+        var outEdges = [aNode outEdges];
+        var inEdges = [aNode inEdges];
+        
+        var edgeIter = [outEdges objectEnumerator];
+        var edgeNode = nil;
+        while(edgeNode = [edgeIter nextObject])
+        {
+            [self removeDirectedEdgeFrom:aNode to:edgeNode];
+        }
+        edgeIter = [inEdges objectEnumerator];
+        while(edgeNode = [edgeIter nextObject])
+        {
+            [self removeDirectedEdgeFrom:edgeNode to:aNode];
+        }
             
         [aNode disconnectFromAllNodes];
         [nodes removeObject:aNode];
