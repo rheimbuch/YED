@@ -10,7 +10,7 @@
     KFDNode     representedObject       @accessors;
     CPView      contentView;
     CPTextField nameField;
-    CPBox       decorator;
+    CPView      decorator;
     
     CGPoint     dragLocation;
 }
@@ -98,47 +98,6 @@
     }
 }
 
-- (CPColor)borderColor
-{
-    return [decorator borderColor];
-}
-
-- (void)setBorderColor:(CPColor)color
-{
-    [decorator setBorderColor:color];
-}
-
-- (float)borderWidth
-{
-    return [decorator borderWidth];
-}
-
-- (void)setBorderWidth:(float)width
-{
-    [decorator setBorderWidth:width];
-}
-
-- (float)cornerRadius
-{
-    return [decorator cornerRadius];
-}
-
-- (void)setCornerRadius:(float)radius
-{
-    [decorator setCornerRadius:radius];
-}
-
-- (CPColor)fillColor
-{
-    return [decorator fillColor];
-}
-
-- (void)setFillColor:(CPColor)color
-{
-    [decorator setFillColor:color];
-}
-
-
 - (void)mouseDown:(CPEvent)anEvent
 {
     dragLocation = [anEvent locationInWindow];
@@ -182,4 +141,55 @@ var KFDNodeViewContentViewKey   = @"KFDNodeViewContentViewKey",
     [coder encodeObject:decorator forKey:KFDNodeViewDecoratorKey];
 }
     
+@end
+
+@implementation KFDNodeView (DecoratorProtocol)
+    - (CPColor)borderColor
+    {
+        if([decorator respondsToSelector:@selector(borderColor)])
+            return [decorator borderColor];
+
+    }
+
+    - (void)setBorderColor:(CPColor)color
+    {
+        if([decorator respondsToSelector:@selector(setBorderColor:)])
+            [decorator setBorderColor:color];
+    }
+
+    - (float)borderWidth
+    {
+        if([decorator respondsToSelector:@selector(borderWidth)])
+            return [decorator borderWidth];
+    }
+
+    - (void)setBorderWidth:(float)width
+    {
+        if([decorator respondsToSelector:@selector(setBorderWidth:)])
+            [decorator setBorderWidth:width];
+    }
+
+    - (float)cornerRadius
+    {
+        if([decorator respondsToSelector:@selector(cornerRadius)])
+            return [decorator cornerRadius];
+    }
+
+    - (void)setCornerRadius:(float)radius
+    {
+        if([decorator respondsToSelector:@selector(setCornerRadius:)])
+            [decorator setCornerRadius:radius];
+    }
+
+    - (CPColor)fillColor
+    {
+        if([decorator respondsToSelector:@selector(fillColor)])
+            return [decorator fillColor];
+    }
+
+    - (void)setFillColor:(CPColor)color
+    {
+        if([decorator respondsToSelector:@selector(setFillColor:)])
+            [decorator setFillColor:color];
+    }
 @end
