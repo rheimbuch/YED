@@ -3,6 +3,7 @@
 @import <AppKit/CPBox.j>
 
 @import "CPBox+CPCoding.j"
+@import "KFDEditorView.j"
 @import "KFDNode.j"
 
 @implementation KFDNodeView : CPView
@@ -45,7 +46,7 @@
         [contentView addSubview:nameField];
         
         
-        
+        [self setPostsFrameChangedNotifications:YES];
         // representedObject = [KFDNode node];
     }
     return self;
@@ -101,10 +102,11 @@
 - (void)mouseDown:(CPEvent)anEvent
 {
     dragLocation = [anEvent locationInWindow];
+    [[KFDEditorView sharedEditor] setNodeView:self];
 }
 
 - (void)mouseDragged:(CPEvent)anEvent
-{
+{    
     var location = [anEvent locationInWindow],
         origin = [self frame].origin;
     
@@ -112,6 +114,7 @@
                                      origin.y + location.y - dragLocation.y)];
     dragLocation = location;
 }
+
 @end
 
 var KFDNodeViewContentViewKey   = @"KFDNodeViewContentViewKey",
@@ -128,6 +131,8 @@ var KFDNodeViewContentViewKey   = @"KFDNodeViewContentViewKey",
         contentView = [coder decodeObjectForKey:KFDNodeViewContentViewKey];
         nameField   = [coder decodeObjectForKey:KFDNodeViewNameFieldKey];
         decorator   = [coder decodeObjectForKey:KFDNodeViewDecoratorKey];
+        
+        [self setPostsFrameChangedNotifications:YES];
     }
     return self;
 }
