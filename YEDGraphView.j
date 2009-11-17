@@ -1,4 +1,9 @@
 @import <AppKit/CPView.j>
+@import <Foundation/CPNotificationCenter.j>
+
+@import "YEDEdgeView.j"
+@import "YEDNodeView.j"
+
 
 @implementation YEDGraphView : CPView
 {
@@ -60,7 +65,12 @@
 
 - (void)mouseDown:(CPEvent)anEvent
 {
-    [[YEDEditorView sharedEditor] setNodeView:nil];
+    [[CPNotificationCenter defaultCenter] 
+        postNotificationName:"YEDSelectedItemNotification"
+        object:nil
+        userInfo:[CPDictionary dictionaryWithJSObject:{
+            "mouseDown":anEvent
+        }]];
 }
 
 @end
