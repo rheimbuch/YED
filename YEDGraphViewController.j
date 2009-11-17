@@ -2,6 +2,7 @@
 @import "YEDGraph.j"
 @import "YEDGraphView.j"
 @import "YEDNodeViewRegistry.j"
+@import "YEDSelectionManager.j"
 
 @implementation YEDGraphViewController : CPViewController 
 {
@@ -265,6 +266,17 @@
     [self didChangeValueForKey:@"graph"];
 }
 
+@end
 
+@implementation YEDGraphViewController (SelectionManager)
 
+/**
+ Delegate method that informs the selection manager if it should handle 
+ the view item it recieved in a selection notification.
+*/
+- (BOOL)selectionManager:(YEDSelectionManager)manager shouldHandle:(id)item
+{
+    var view = [self view];
+    return [[view subviews] containsObject:item];
+}
 @end
