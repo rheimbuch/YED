@@ -66,6 +66,8 @@ var Padding = 20;
 {
     YEDNodeView     startNodeView       @accessors;
     YEDNodeView     endNodeView         @accessors;
+    CPColor         strokeColor         @accessors;
+    BOOL            isSelected          @accessors;
 }
 
 + (id)edgeFromView:(YEDNodeView)start toView:(YEDNodeView)end
@@ -80,6 +82,7 @@ var Padding = 20;
     {
         [self setStartNodeView:start];
         [self setEndNodeView:end];
+        [self setStrokeColor:[CPColor blackColor]];
     }
     return self;
 }
@@ -160,11 +163,46 @@ var Padding = 20;
     }
 }
 
-// - (void)mouseDown:(CPEvent)event
-// {
-//     var location = [self convertPoint:[event locationInWindow] fromView:nil];
-//     CPLog.trace("MouseDown: ("+location.x+", "+location.y+")");
-// }
+- (void)mouseDown:(CPEvent)event
+{
+    var location = [self convertPoint:[event locationInWindow] fromView:nil];
+    var onEdge = [self containsPoint:location];
+    if(onEdge)
+    {
+        CPLog.trace("Selecting Edge");
+        [[CPNotificationCenter defaultCenter] 
+            postNotificationName:"YEDSelectedItemNotification"
+            object:self
+            userInfo:[CPDictionary dictionaryWithJSObject:{
+                "mouseDown":event
+            }]];
+    }
+    else
+        [super mouseDown:event];
+
+}
+
+- (id)hitTest:(CGPoint)point
+{   
+    if([self containsPoint:[self convertPoint:point fromView:[self superview]]])
+        return self;
+    else
+        return nil;
+}
+
+- (BOOL)containsPoint:(CGPoint)point
+{
+    var A = [self convertPoint:[startNodeView center] fromView:[self superview]],
+        B = [self convertPoint:[endNodeView center] fromView:[self superview]];
+    
+    var slope = (B.y - A.y)/(B.x - A.x);
+    
+    var x = point.x,
+        y = point.y;
+    
+    var Y = slope*(x - A.x) + A.y;
+    return (Y-10 <= y) && (y <= Y+10);
+}
 
 - (void)nodeViewFrameChanged:(CPNotification)notification
 {
@@ -197,6 +235,26 @@ var Padding = 20;
     [self setNeedsDisplay:YES];
 }
 
+- (void)setIsSelected:(BOOL)selected
+{
+    if(isSelected === selected)
+        return;
+    
+    [self willChangeValueForKey:@"isSelected"];
+    isSelected = selected;
+    [self didChangeValueForKey:@"isSelected"];
+    
+    if(isSelected)
+    {
+        [self setStrokeColor:[CPColor redColor]];
+        [self setNeedsDisplay:YES];
+    }
+    else
+    {
+        [self setStrokeColor:[CPColor blackColor]];
+        [self setNeedsDisplay:YES];
+    }
+}
 
 - (id)drawRect:(CGRect)rect
 {
@@ -206,12 +264,12 @@ var Padding = 20;
     
     var rect = CPRectInset(rect, Padding, Padding);
     // CPLog.trace("YEDEdgeView: drawing edge");
-    var startPoint = [self convertPoint:[startNodeView center] fromView:nil],
-        endPoint = [self convertPoint:[endNodeView center] fromView:nil],
+    var startPoint = [self convertPoint:[startNodeView center] fromView:[self superview]],
+        endPoint = [self convertPoint:[endNodeView center] fromView:[self superview]],
         context = [[CPGraphicsContext currentContext] graphicsPort];
     
     
-    CGContextSetStrokeColor(context, [CPColor blackColor]);
+    CGContextSetStrokeColor(context, [self strokeColor]);
     CGContextSetLineWidth(context, 3.0);
     
     var path = [CPBezierPath bezierPath];
@@ -231,11 +289,11 @@ var Padding = 20;
         var pt = intersection.points[0];
         // console.log(pt);
         // var point = [self convertPoint:CGPointMake(pt.x,pt.y) fromView:nil];
-        var point = [self convertPoint:CGPointMake(pt.x,pt.y) fromView:nil];
+        var point = [self convertPoint:CGPointMake(pt.x,pt.y) fromView:[self superview]];
         // CPLog.trace("Marker at: ("+point.x+", "+point.y+")");
         var markerRect = CGRectMake(point.x-7,point.y-7,14,14);
         console.debug(markerRect);
-        CGContextSetFillColor(context, [CPColor blackColor]);
+        CGContextSetFillColor(context, [self strokeColor]);
         CGContextFillEllipseInRect(context, markerRect);
         
     }
