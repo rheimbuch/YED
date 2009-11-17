@@ -1,20 +1,26 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPBox.j>
+@import <Foundation/CPNotificationCenter.j>
 
 @import "CPBox+CPCoding.j"
 @import "CPView+OffsetCorners.j"
 @import "YEDEditorView.j"
 @import "YEDNode.j"
 
+YEDNodeViewSelectedNotification = "YEDNodeViewSelectedNotification";
+
 @implementation YEDNodeView : CPView
 {
-    YEDNode     representedObject       @accessors;
-    CPView      contentView;
-    CPTextField nameField;
-    CPView      decorator;
-    
-    CGPoint     dragLocation;
+    YEDNode         representedObject       @accessors;
+    CPView          contentView;
+    CPTextField     nameField;
+    CPView          decorator;
+                    
+    CGPoint         dragLocation;
+                    
+    BOOL            isSelected              @accessors;
+    YEDEditorView   editorView;
 }
 
 - (id)initWithFrame:aFrame
@@ -22,13 +28,13 @@
     self = [super initWithFrame:aFrame];
     if(self)
     {
+        editorView = [[YEDEditorView alloc] initWithFrame:CPRectMakeZero()];
+        
         decorator = [[CPBox alloc] initWithFrame:(CPRectMake(0,0,
                                                         CPRectGetWidth(aFrame),
                                                         CPRectGetHeight(aFrame)))];
         [decorator setAutoresizingMask:(CPViewWidthSizable | CPViewHeightSizable)];
         [decorator setBorderType:CPLineBorder];
-        console.debug("YEDNodeView decorator box");
-        console.debug(decorator);
         [self addSubview:decorator];
         
         contentView = [[CPView alloc] initWithFrame:(CPRectMake(0,0,
@@ -103,10 +109,37 @@
     }
 }
 
+- (void)setIsSelected:(BOOL)selected
+{
+    if(isSelected === selected)
+        return;
+    
+    [self willChangeValueForKey:@"isSelected"];
+    isSelected = selected;
+    [self didChangeValueForKey:@"isSelected"];
+    
+    if(isSelected)
+    {
+        CPLog.trace("Activating Editor View");
+        [editorView setNodeView:self];
+    }
+    else
+    {
+        [editorView setNodeView:nil];
+    }
+}
+
 - (void)mouseDown:(CPEvent)anEvent
 {
     dragLocation = [anEvent locationInWindow];
-    [[YEDEditorView sharedEditor] setNodeView:self];
+    
+    CPLog.trace("Selecting Node");
+    [[CPNotificationCenter defaultCenter] 
+        postNotificationName:"YEDSelectedItemNotification"
+        object:self
+        userInfo:[CPDictionary dictionaryWithJSObject:{
+            "mouseDown":anEvent
+        }]];
 }
 
 - (void)mouseDragged:(CPEvent)anEvent
@@ -125,7 +158,8 @@
 
 var YEDNodeViewContentViewKey   = @"YEDNodeViewContentViewKey",
     YEDNodeViewNameFieldKey     = @"YEDNodeViewNameFieldKey",
-    YEDNodeViewDecoratorKey     = @"YEDNodeViewDecoratorKey";
+    YEDNodeViewDecoratorKey     = @"YEDNodeViewDecoratorKey",
+    YEDNodeViewEditorViewKey    = @"YEDNodeViewEditorViewKey";
 
 @implementation YEDNodeView (CPCoding)
 
@@ -137,6 +171,7 @@ var YEDNodeViewContentViewKey   = @"YEDNodeViewContentViewKey",
         contentView = [coder decodeObjectForKey:YEDNodeViewContentViewKey];
         nameField   = [coder decodeObjectForKey:YEDNodeViewNameFieldKey];
         decorator   = [coder decodeObjectForKey:YEDNodeViewDecoratorKey];
+        editorView  = [coder decodeObjectForKey:YEDNodeViewEditorViewKey];
         
         [self setPostsFrameChangedNotifications:YES];
     }
@@ -150,6 +185,7 @@ var YEDNodeViewContentViewKey   = @"YEDNodeViewContentViewKey",
     [coder encodeObject:contentView forKey:YEDNodeViewContentViewKey];
     [coder encodeObject:nameField forKey:YEDNodeViewNameFieldKey];
     [coder encodeObject:decorator forKey:YEDNodeViewDecoratorKey];
+    [coder encodeObject:editorView forKey:YEDNodeViewEditorViewKey];
 }
     
 @end
