@@ -52,6 +52,10 @@ var DefaultRegistry = nil;
         {
             [view setRepresentedObject:aNodeOrClass];
         }
+        else if([aNodeOrClass isKindOfClass:YEDNode] && [aNodeOrClass respondsToSelector:@selector(nodeWithName:)])
+        {
+            [view setRepresentedObject:[aNodeOrClass nodeWithName:[aNodeOrClass className]]];
+        }
         return view;
     }
 }
