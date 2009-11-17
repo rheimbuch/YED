@@ -23,6 +23,9 @@ CPLogRegister(CPLogConsole);
 {
     CPWindow    theWindow; //this "outlet" is connected automatically by the Cib
     CPView      contentView;
+    CPView      sideView;
+    CPView      canvasView;
+    YEDNodeViewRegistry registry;
 }
 
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification
@@ -31,7 +34,7 @@ CPLogRegister(CPLogConsole);
     // [[YEDEditorView sharedEditor] setBackgroundColor:[CPColor blueColor]];
     // Setup default Node Views
     CPLog.trace("Setting up view registry");
-    var registry = [YEDNodeViewRegistry registry];
+    registry = [YEDNodeViewRegistry registry];
     var subjectNodeView = [[YEDNodeView alloc] initWithFrame:CPRectMake(0,0,150,50)];
     [subjectNodeView setBorderWidth:4.0];
     [subjectNodeView setBorderColor:[CPColor redColor]];
@@ -54,10 +57,18 @@ CPLogRegister(CPLogConsole);
     [graphViewController setNodeViewRegistry:registry];
     [graphViewController setRepresentedObject:graph];
     
+    var selectionManager = [[YEDSelectionManager alloc] init];
+    [selectionManager setDelegate:graphViewController];
+    
+    var canvasScroll = [[CPScrollView alloc] initWithFrame:CGRectMakeCopy([canvasView bounds])];
+    [canvasScroll setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+    [canvasScroll setAutohidesScrollers:YES];
+    [canvasView addSubview:canvasScroll];
+    
      graphView = [graphViewController view];
-    [graphView setFrame:CPRectMake(0,0,CPRectGetWidth([contentView bounds]),CPRectGetHeight([contentView bounds]))];
-    [graphView setAutoresizingMask:(CPViewWidthSizable | CPViewHeightSizable)];
-    [contentView addSubview:graphView];
+    [graphView setFrame:CPRectMake(0,0,1000,1000)];
+    // [graphView setAutoresizingMask:(CPViewWidthSizable | CPViewHeightSizable)];
+    [canvasScroll setDocumentView:graphView];
     
     
     
