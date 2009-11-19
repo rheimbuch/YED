@@ -4,6 +4,10 @@
 @import "YEDEdgeView.j"
 @import "YEDNodeView.j"
 
+YEDGraphViewNodeViewAddedNotification       = @"YEDGraphViewNodeViewAddedNotification",
+YEDGraphViewNodeViewRemovedNotification     = @"YEDGraphViewNodeViewRemovedNotification",
+YEDGraphViewEdgeViewAddedNotification       = @"YEDGraphViewEdgeViewAddedNotification",
+YEDGraphViewEdgeViewRemovedNotification     = @"YEDGraphViewEdgeViewRemovedNotification";
 
 @implementation YEDGraphView : CPView
 {
@@ -16,6 +20,14 @@
         return;
     
     [self addSubview:aNodeView];
+    
+    [[CPNotificationCenter defaultCenter] 
+        postNotificationName:YEDGraphViewNodeViewAddedNotification
+        object:self
+        userInfo:[CPDictionary dictionaryWithJSObject:{
+            "nodeView": aNodeView,
+            "node": [aNodeView representedObject]
+        }]];
 }
 
 - (void)removeNodeView:(YEDNodeView)aNodeView
@@ -23,6 +35,14 @@
     if(![[self subviews] containsObject:aNodeView])
         return;
     [aNodeView removeFromSuperview];
+    
+    [[CPNotificationCenter defaultCenter] 
+        postNotificationName:YEDGraphViewNodeViewRemovedNotification
+        object:self
+        userInfo:[CPDictionary dictionaryWithJSObject:{
+            "nodeView": aNodeView,
+            "node": [aNodeView representedObject]
+        }]];
 }
 
 - (void)addEdgeView:(YEDEdgeView)edgeView
@@ -31,6 +51,15 @@
         return;
     
     [self addSubview:edgeView];
+    
+    [[CPNotificationCenter defaultCenter] 
+        postNotificationName:YEDGraphViewEdgeViewAddedNotification
+        object:self
+        userInfo:[CPDictionary dictionaryWithJSObject:{
+            "edgeView": edgeView,
+            "startNode": [[edgeView startNodeView] representedObject],
+            "endNode": [[edgeView endNodeView] representedObject]
+        }]];
 }
 
 - (void)removeEdgeView:(YEDEdgeView)edgeView
@@ -39,6 +68,15 @@
         return
         
     [edgeView removeFromSuperview];
+    
+    [[CPNotificationCenter defaultCenter] 
+        postNotificationName:YEDGraphViewEdgeViewRemovedNotification
+        object:self
+        userInfo:[CPDictionary dictionaryWithJSObject:{
+            "edgeView": edgeView,
+            "startNode": [[edgeView startNodeView] node],
+            "endNode": [[edgeView endNodeView] node]
+        }]];
 }
 
 - (void)removeAllNodeViews
