@@ -11,7 +11,17 @@ YEDGraphViewEdgeViewRemovedNotification     = @"YEDGraphViewEdgeViewRemovedNotif
 
 @implementation YEDGraphView : CPView
 {
-    id          controller                @accessors;
+
+}
+
+- (id)init
+{
+    self = [super init];
+    if(self)
+    {
+        [self registerForDraggedTypes:[YEDNodeViewDragType]];
+    }
+    return self;
 }
 
 - (void)addNodeView:(YEDNodeView)aNodeView
@@ -92,13 +102,13 @@ YEDGraphViewEdgeViewRemovedNotification     = @"YEDGraphViewEdgeViewRemovedNotif
 
 - (void)performDragOperation:(CPDraggingInfo)aSender
 {
+    CPLog.trace("YEDGraphView: performDragOperation:");
     var nodeView = [CPKeyedUnarchiver unarchiveObjectWithData:[[aSender draggingPasteboard] dataForType:YEDNodeViewDragType]],
         location = [self convertPoint:[aSender draggingLocation] fromView:nil];
         
     [nodeView setFrameOrigin:CGPointMake(location.x - CGRectGetWidth([nodeView frame])/2.0, location.y - CGRectGetHeight([nodeView frame])/2.0)];
+    CPLog.trace("YEDGraphView: a nodeView was dropped on the view:");
     [self addNodeView:nodeView];
-    if([controller respondsToSelector:@selector(addedNodeView:toGraphView:)])
-        [controller addedNodeView:nodeView toGraphView:self];
 }
 
 - (void)mouseDown:(CPEvent)anEvent
