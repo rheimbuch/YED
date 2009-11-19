@@ -69,6 +69,7 @@
     var center = [CPNotificationCenter defaultCenter];
     var graph = [self representedObject];
     
+    // Observe changes in the graph
     [center addObserver:self 
             selector:@selector(graphNodeAdded:) 
             name:YEDGraphNodeAddedNotification
@@ -85,6 +86,24 @@
             selector:@selector(graphEdgeRemoved:)
             name:YEDGraphEdgeRemovedNotification
             object:graph];
+    
+    // Observe changes in the graph view
+    [center addObserver:self
+            selector:@selector(graphViewNodeViewAdded:)
+            name:YEDGraphViewNodeViewAddedNotification
+            object:[self view]];
+    [center addObserver:self
+            selector:@selector(graphViewNodeViewRemoved:)
+            name:YEDGraphViewNodeViewRemovedNotification
+            object:[self view]];
+    [center addObserver:self
+            selector:@selector(graphViewEdgeViewAdded:)
+            name:YEDGraphViewEdgeViewAddedNotification
+            object:[self view]];
+    [center addObserver:self
+            selector:@selector(graphViewEdgeViewRemoved:)
+            name:YEDGraphViewEdgeViewRemovedNotification
+            object:[self view]];
 }
 
 - (void)_removeObservers
@@ -92,6 +111,7 @@
     var center = [CPNotificationCenter defaultCenter];
     var graph = [self representedObject];
     
+    // Stop observing changes in the graph
     [center removeObserver:self
             name:YEDGraphNodeAddedNotification
             object:graph];
@@ -104,6 +124,20 @@
     [center removeObserver:self
             name:YEDGraphEdgeRemovedNotification
             object:graph];
+            
+    // Stop observing changes in the graph view
+    [center removeObserver:self
+            name:YEDGraphViewNodeViewAddedNotification
+            object:[self view]];
+    [center removeObserver:self
+            name:YEDGraphViewNodeViewRemovedNotification
+            object:[self view]];
+    [center removeObserver:self
+            name:YEDGraphViewEdgeViewAddedNotification
+            object:[self view]];
+    [center removeObserver:self
+            name:YEDGraphViewEdgeViewRemovedNotification
+            object:[self view]];
 }
 
 - (void)graphNodeAdded:(CPNotification)notification
