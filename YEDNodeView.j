@@ -8,7 +8,7 @@
 @import "YEDEditorView.j"
 @import "YEDNode.j"
 
-YEDNodeViewSelectedNotification = "YEDNodeViewSelectedNotification";
+YEDNodeViewDragType = "YEDNodeViewDragType";
 
 @implementation YEDNodeView : CPView
 {
@@ -97,6 +97,7 @@ YEDNodeViewSelectedNotification = "YEDNodeViewSelectedNotification";
     console.debug(self);
     [nameField setStringValue:[representedObject name]];
     [nameField sizeToFit];
+    [nameField setCenter:[contentView convertPoint:[contentView center] fromView:nil]];
     
     [self setNeedsDisplay:YES];
 }
@@ -159,7 +160,8 @@ YEDNodeViewSelectedNotification = "YEDNodeViewSelectedNotification";
 var YEDNodeViewContentViewKey   = @"YEDNodeViewContentViewKey",
     YEDNodeViewNameFieldKey     = @"YEDNodeViewNameFieldKey",
     YEDNodeViewDecoratorKey     = @"YEDNodeViewDecoratorKey",
-    YEDNodeViewEditorViewKey    = @"YEDNodeViewEditorViewKey";
+    YEDNodeViewEditorViewKey    = @"YEDNodeViewEditorViewKey",
+    YEDNodeViewRepresentedObject = @"YEDNodeViewRepresentedObject";
 
 @implementation YEDNodeView (CPCoding)
 
@@ -172,6 +174,7 @@ var YEDNodeViewContentViewKey   = @"YEDNodeViewContentViewKey",
         nameField   = [coder decodeObjectForKey:YEDNodeViewNameFieldKey];
         decorator   = [coder decodeObjectForKey:YEDNodeViewDecoratorKey];
         editorView  = [coder decodeObjectForKey:YEDNodeViewEditorViewKey];
+        representedObject = [coder decodeObjectForKey:YEDNodeViewRepresentedObject];
         
         [self setPostsFrameChangedNotifications:YES];
     }
@@ -186,6 +189,7 @@ var YEDNodeViewContentViewKey   = @"YEDNodeViewContentViewKey",
     [coder encodeObject:nameField forKey:YEDNodeViewNameFieldKey];
     [coder encodeObject:decorator forKey:YEDNodeViewDecoratorKey];
     [coder encodeObject:editorView forKey:YEDNodeViewEditorViewKey];
+    [coder encodeObject:representedObject forKey:YEDNodeViewRepresentedObject];
 }
     
 @end
