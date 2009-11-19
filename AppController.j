@@ -38,7 +38,7 @@ CPLogRegister(CPLogConsole);
     var subjectNodeView = [[YEDNodeView alloc] initWithFrame:CPRectMake(0,0,150,50)];
     [subjectNodeView setBorderWidth:4.0];
     [subjectNodeView setBorderColor:[CPColor redColor]];
-    [subjectNodeView setCornerRadius:10];
+    [subjectNodeView setCornerRadius:0];
     [subjectNodeView setFillColor:[CPColor whiteColor]];
     [registry registerPrototype:subjectNodeView
                 for:YEDSubjectNode];
@@ -46,7 +46,7 @@ CPLogRegister(CPLogConsole);
     var operationNodeView = [[YEDNodeView alloc] initWithFrame:CPRectMake(0,0,100,80)];
     [operationNodeView setBorderWidth:3.0];
     [operationNodeView setBorderColor:[CPColor greenColor]];
-    [operationNodeView setCornerRadius:0];
+    [operationNodeView setCornerRadius:20];
     [operationNodeView setFillColor:[CPColor whiteColor]];
     [registry registerPrototype:operationNodeView
                 for:YEDOperationNode];
