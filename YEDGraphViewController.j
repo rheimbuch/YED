@@ -140,33 +140,6 @@
             object:[self view]];
 }
 
-- (void)graphNodeAdded:(CPNotification)notification
-{
-    var node = [[notification userInfo] objectForKey:"node"];
-    [self addNodeToView:node];
-}
-
-- (void)graphNodeRemoved:(CPNotification)notification
-{
-    var node = [[notification userInfo] objectForKey:"node"];
-    [self removeNodeFromView:node];
-}
-
-- (void)graphEdgeAdded:(CPNotification)notification
-{
-    CPLog.trace("YEDGraphViewController: graphEdgeAdded");
-    var startNode = [[notification userInfo] objectForKey:"fromNode"],
-        endNode = [[notification userInfo] objectForKey:"toNode"];
-    [self addEdgeToViewFrom:startNode to:endNode];
-}
-
-- (void)graphEdgeRemoved:(CPNotification)notification
-{
-    CPLog.trace("YEDGraphViewController: graphEdgeRemoved");
-    var startNode = [[notification userInfo] objectForKey:"fromNode"],
-        endNode = [[notification userInfo] objectForKey:"toNode"];
-    [self removeEdgeFromViewFrom:startNode to:endNode];
-}
 
 - (void)addNodeToView:(YEDNode)node
 {
@@ -298,6 +271,81 @@
     [self willChangeValueForKey:@"graph"];
     [self setRepresentedObject:aGraph];
     [self didChangeValueForKey:@"graph"];
+}
+
+@end
+
+@implementation YEDGraphViewController (NotificationHandlers)
+/**
+ Handlers for graph changes
+ */
+- (void)graphNodeAdded:(CPNotification)notification
+{
+    var node = [[notification userInfo] objectForKey:"node"];
+    [self addNodeToView:node];
+}
+
+- (void)graphNodeRemoved:(CPNotification)notification
+{
+    var node = [[notification userInfo] objectForKey:"node"];
+    [self removeNodeFromView:node];
+}
+
+- (void)graphEdgeAdded:(CPNotification)notification
+{
+    CPLog.trace("YEDGraphViewController: graphEdgeAdded");
+    var startNode = [[notification userInfo] objectForKey:"fromNode"],
+        endNode = [[notification userInfo] objectForKey:"toNode"];
+    [self addEdgeToViewFrom:startNode to:endNode];
+}
+
+- (void)graphEdgeRemoved:(CPNotification)notification
+{
+    CPLog.trace("YEDGraphViewController: graphEdgeRemoved");
+    var startNode = [[notification userInfo] objectForKey:"fromNode"],
+        endNode = [[notification userInfo] objectForKey:"toNode"];
+    [self removeEdgeFromViewFrom:startNode to:endNode];
+}
+
+/**
+ Handlers for graph view changes
+ */
+- (void)graphViewNodeViewAdded:(CPNotification)notification
+{
+    CPLog.trace("graphViewNodeViewAdded:");
+    
+    var graphView = [notification object],
+        nodeView  = [[notification userInfo] valueForKey:@"nodeView"],
+        node      = [nodeView representedObject];
+    
+    if(!node)
+    {
+        CPLog.error("The nodeView added does not have a node. Removing the nodeView.");
+        [nodeView removeFromSuperview];
+        return;
+    }
+        
+    
+    if(![[self representedObject] containsNode:node])
+    {
+        [nodeViews addObject:nodeView];
+        [[self representedObject] addNode:node];
+    }
+}
+
+- (void)graphViewNodeViewRemoved:(CPNotification)notification
+{
+    CPLog.trace("graphViewNodeViewRemoved:");
+}
+
+- (void)graphViewEdgeViewAdded:(CPNotification)notification
+{
+    CPLog.trace("graphViewEdgeViewAdded:");
+}
+
+- (void)graphViewEdgeViewRemoved:(CPNotification)notification
+{
+    CPLog.trace("graphViewEdgeViewRemoved:");
 }
 
 @end
