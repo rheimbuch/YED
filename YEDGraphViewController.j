@@ -147,7 +147,12 @@
     if(![[self graph] containsNode:node])
         return;
     
-    var view = [nodeViewRegistry viewFor:node];
+    var view = [self viewForNode:node] || [nodeViewRegistry viewFor:node];
+    
+    // If the nodeView is already in the graphView, bail
+    if([[[self view] subviews] containsObject:view])
+        return;
+    
     var graphCenter = [[self view] center];
     [view setCenter: [[self view] convertPoint:graphCenter fromView:nil]];
     
