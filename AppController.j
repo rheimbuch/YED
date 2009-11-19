@@ -6,6 +6,7 @@
  * Copyright 2009, Your Company All rights reserved.
  */
 
+@import <AppKit/CPCollectionView.j>
 @import <Foundation/CPObject.j>
 @import "YEDEdgeView.j"
 @import "YEDGraph.j"
@@ -26,6 +27,7 @@ CPLogRegister(CPLogConsole);
     CPView      sideView;
     CPView      canvasView;
     YEDNodeViewRegistry registry;
+    CPCollectionView nodeCollectionView;
 }
 
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification
@@ -88,17 +90,30 @@ CPLogRegister(CPLogConsole);
     
     
     
-    // At this point, the graph should have two nodes, and 
-    //  the graph view should show them with the above
-    //  registered nodeviews.
+    // var nodeCollectionView = [[CPCollectionView alloc] initWithFrame:CGRectMake(0,0,200,400)];
+    // [nodeCollectionView setBackgroundColor:[CPColor greenColor]];
+    [nodeCollectionView setMinItemSize:CGSizeMake(200, 50)];
+    [nodeCollectionView setMaxItemSize:CGSizeMake(10000, 50)];
+    // [sideView addSubview:nodeCollectionView];
+    var nodeItemPrototype = [[CPCollectionViewItem alloc] init];
+    [nodeItemPrototype setView:[[NodeViewCollectionItem alloc] initWithFrame:CGRectMakeZero()]];
+    [nodeCollectionView setItemPrototype:nodeItemPrototype];
+    [nodeCollectionView setDelegate:self];
     
-    // var nodeViewDecorator = [CPBox boxEnclosingView:nodeView];
-    // [nodeViewDecorator setBorderType:CPLineBorder];
-    // [nodeViewDecorator setBorderWidth:5];
-    // [nodeViewDecorator setCornerRadius:20.0];
-    // [nodeViewDecorator setFillColor:[CPColor grayColor]];
-    // console.log(nodeViewDecorator);
+    preparedNodeViews = [[registry viewFor:[YEDOperationNode nodeWithName:@"Operation"]], [registry viewFor:[YEDSubjectNode nodeWithName:@"Subject"]]];
+    [nodeCollectionView setContent:preparedNodeViews];
+    console.debug(nodeCollectionView);
     
+}
+
+- (CPData)collectionView:(CPCollectionView)collectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)type
+{
+    return [CPKeyedArchiver archivedDataWithRootObject:[preparedNodeViews objectAtIndex:[indices firstIndex]]];
+}
+
+- (CPArray)collectionView:(CPCollectionView)collectionView dragTypesForItemsAtIndexes:(CPIndexSet)indices
+{
+    return [YEDNodeViewDragType];
 }
 
 - (void)awakeFromCib
@@ -119,6 +134,31 @@ CPLogRegister(CPLogConsole);
         var node = [YEDSubjectNode nodeWithName:name];
         [graph addNode:node];
     }
+}
+
+@end
+
+@implementation NodeViewCollectionItem : CPView
+{
+    CPTextField nameField;
+}
+
+- (void)setRepresentedObject:(id)object
+{
+    if(!nameField)
+    {
+        nameField = [[CPTextField alloc] initWithFrame:CGRectMake(50,15,145,20)];
+        [nameField setFont:[CPFont boldSystemFontOfSize:12.0]];
+        [self addSubview:nameField];
+    }
+    
+    [nameField setStringValue:[[object representedObject] name]];
+}
+
+- (void)setSelected:(BOOL)isSelected
+{
+    [self setBackgroundColor:isSelected ? [CPColor blueColor] : nil];
+    [nameField setTextColor:isSelected ? [CPColor whiteColor] : [CPColor blackColor]];
 }
 
 @end
