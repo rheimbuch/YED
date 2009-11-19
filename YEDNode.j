@@ -276,5 +276,42 @@ YEDNodeGraphHasCycles = function(aNode, traverseParents)
     return YEDNodeGraphHasCycles(self,YES);
 }
 
+@end
 
+// Coding Keys
+var YEDNodeNameKey = @"YEDNodeNameKey",
+    YEDNodeIsAcyclicKey = @"YEDNodeIsAcyclicKey",
+    YEDNodeOutEdgesKey = @"YEDNodeOutEdgesKey",
+    YEDNodeInEdgesKey = @"YEDNodeInEdgesKey",
+    YEDNodeAllowsConnectionsToKey = @"YEDNodeAllowsConnectionsToKey",
+    YEDNodeAllowsConnectionsFromKey = @"YEDNodeAllowsConnectionsFromKey";
+
+@implementation YEDNode (CPCoding)
+
+- (id)initWithCoder:(CPCoder)coder
+{
+    self = [super init];
+    if(self)
+    {
+        name        = [coder decodeObjectForKey:YEDNodeNameKey];
+        isAcyclic   = [coder decodeObjectForKey:YEDNodeIsAcyclicKey];
+        // outEdges    = [coder decodeObjectForKey:YEDNodeOutEdgesKey];
+        // inEdges     = [coder decodeObjectForKey:YEDNodeInEdgesKey];
+        // allowsConnectionsTo     = [coder decodeObjectForKey:YEDNodeAllowsConnectionsToKey];
+        // allowsConnectionsFrom   = [coder decodeObjectForKey:YEDNodeAllowsConnectionsFromKey];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(CPCoder)coder
+{
+    // [super encodeWithCoder:coder];
+    
+    [coder encodeObject:name forKey:YEDNodeNameKey];
+    [coder encodeObject:isAcyclic forKey:YEDNodeIsAcyclicKey];
+    // [coder encodeObject:outEdges forKey:YEDNodeOutEdgesKey];
+    // [coder encodeObject:inEdges forKey:YEDNodeInEdgesKey];
+    // [coder encodeObject:allowsConnectionsTo forKey:YEDNodeOutEdgesKey];
+    // [coder encodeObject:allowsConnectionsFrom forKey:YEDNodeInEdgesKey];
+}
 @end
