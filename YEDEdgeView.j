@@ -201,7 +201,9 @@ var Padding = 20;
         y = point.y;
     
     var Y = slope*(x - A.x) + A.y;
-    return (Y-10 <= y) && (y <= Y+10);
+    var X = (y - A.y)/slope + A.x
+    
+    return ((Y-10 <= y) && (y <= Y+10)) || ((X-10 <= x) && (x <= X+10));
 }
 
 - (void)nodeViewFrameChanged:(CPNotification)notification
