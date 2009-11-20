@@ -6,7 +6,7 @@ YEDSelectedItemNotification = "YEDSelectedItemNotification";
 
 @implementation YEDSelectionManager : CPObject 
 {
-    CPSet       selectedItems;
+    CPSet       selectedItems   @accessors;
     id          delegate        @accessors;
 }
 
