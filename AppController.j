@@ -61,6 +61,7 @@ CPLogRegister(CPLogConsole);
     
     var selectionManager = [[YEDSelectionManager alloc] init];
     [selectionManager setDelegate:graphViewController];
+    [graphViewController setSelectionManager:selectionManager];
     
     var canvasScroll = [[CPScrollView alloc] initWithFrame:CGRectMakeCopy([canvasView bounds])];
     [canvasScroll setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
@@ -134,6 +135,13 @@ CPLogRegister(CPLogConsole);
         var node = [YEDSubjectNode nodeWithName:name];
         [graph addNode:node];
     }
+}
+
+- (void)delete:(id)sender
+{
+    CPLog.trace("delete:");
+    [graphViewController deleteSelected];
+    
 }
 
 @end
