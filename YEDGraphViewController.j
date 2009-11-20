@@ -9,6 +9,7 @@
     CPArray                 nodeViews;
     YEDNodeViewRegistry     nodeViewRegistry    @accessors;
     CPArray                 edgeViews;
+    YEDSelectionManager     selectionManager    @accessors;
 }
 
 - (id)init
@@ -207,6 +208,20 @@
     }
 }
 
+- (YEDEdgeView)viewForEdgeFromNode:(YEDNode)start toNode:(YEDNode)end
+{
+    var viewIter = [edgeViews objectEnumerator],
+        view = nil;
+    
+    while(view = [viewIter nextObject])
+    {
+        var startNode = [[view startNodeView] representedObject],
+            endNode   = [[view endNodeView] representedObject];
+        if(startNode === start && endNode === end)
+            return view;
+    }
+}
+
 - (void)addEdgeToViewFrom:(YEDNode)start to:(YEDNode)end
 {
     CPLog.trace("YEDGraphViewController: addEdgeToViewFrom:to:");
@@ -223,9 +238,12 @@
         return;
     
     CPLog.trace("YEDGraphViewController: addEdgeToViewFrom:to: creating Edge View");
-    var edgeView = [YEDEdgeView edgeFromView:startView toView:endView];
-    [edgeViews addObject:edgeView];
-    [[self view] addEdgeView:edgeView];
+    var edgeView = [self viewForEdgeFromNode:start toNode:end] || [YEDEdgeView edgeFromView:startView toView:endView];
+    
+    if(![edgeViews containsObject:edgeView])
+        [edgeViews addObject:edgeView];
+    if(![[[self view] subviews] containsObject:edgeView])
+        [[self view] addEdgeView:edgeView];
 }
 
 - (void)removeEdgeFromViewFrom:(YEDNode)start to:(YEDNode)end
@@ -341,11 +359,35 @@
 - (void)graphViewNodeViewRemoved:(CPNotification)notification
 {
     CPLog.trace("graphViewNodeViewRemoved:");
+    
+    var graphView   = [notification object],
+        nodeView    = [[notification userInfo] valueForKey:@"nodeView"],
+        node        = [nodeView representedObject];
+    
+    if(!node)
+    {
+        CPLog.error("The nodeView removed does not have a node. Not modifying graph.");
+        return;
+    }
+    
+    if([[self representedObject] containsNode:node])
+    {
+        [nodeViews removeObject:nodeView];
+        [[self representedObject] removeNode:node];
+    }
 }
 
 - (void)graphViewEdgeViewAdded:(CPNotification)notification
 {
     CPLog.trace("graphViewEdgeViewAdded:");
+    
+    var graphView = [notification object],
+        graph     = [self representedObject],
+        edgeView  = [[notification userInfo] valueForKey:@"edgeView"],
+        startNode = [[notification userInfo] valueForKey:@"startNode"],
+        endNode   = [[notification userInfo] valueForKey:@"endNode"];
+    
+    [graph createDirectedEdgeFrom:startNode to:endNode];
 }
 
 - (void)graphViewEdgeViewRemoved:(CPNotification)notification
@@ -365,5 +407,88 @@
 {
     var view = [self view];
     return [[view subviews] containsObject:item];
+}
+
+/**
+ Methods for interacting with the current selection
+ */
+- (CPArray)selectedViews
+{
+    console.debug([[[selectionManager selectedItems] allObjects] copy]);
+    return [[[selectionManager selectedItems] allObjects] copy];
+}
+
+- (CPArray)selectedViewsOfType:(id)classType
+{
+    var selectedViews       = [self selectedViews],
+        selectedTypeViews   = [CPArray array],
+        viewIter            = [selectedViews objectEnumerator],
+        currentView         = nil;
+    
+    while(currentView = [viewIter nextObject])
+    {
+        if([currentView isKindOfClass:classType])
+            [selectedTypeViews addObject:currentView];
+    }
+    return selectedTypeViews;
+}
+
+- (CPArray)selectedNodeViews
+{
+    return [self selectedViewsOfType:YEDNodeView];
+}
+
+- (CPArray)selectedEdgeViews
+{
+    return [self selectedViewsOfType:YEDEdgeView];
+}
+
+- (CPArray)selectedNodes
+{
+    var selectedNodeViews   = [self selectedNodeViews],
+        viewIter            = [selectedNodeViews objectEnumerator],
+        currentView         = nil,
+        selectedNodes       = [CPArray array],
+        node                = nil;
+    
+    while(currentView = [viewIter nextObject])
+    {
+        node = [currentView representedObject];
+        if(node)
+            [selectedNodes addObject:node];
+            
+    }
+    return selectedNodes;
+}
+
+- (void)deleteSelected
+{
+    var graph = [self representedObject],
+        selectedEdgeViews = [self selectedEdgeViews],
+        selectedNodes = [self selectedNodes];
+    console.debug(graph);
+    console.debug(selectedEdgeViews);
+    console.debug(selectedNodes);
+    var edgeViewIter = [selectedEdgeViews objectEnumerator],
+        edgeView = nil,
+        edgeStartNode = nil,
+        edgeEndNode = nil;
+    
+    while(edgeView = [edgeViewIter nextObject])
+    {
+        edgeStartNode = [[edgeView startNodeView] representedObject];
+        edgeEndNode = [[edgeView endNodeView] representedObject];
+        
+        [graph removeDirectedEdgeFrom:edgeStartNode to:edgeEndNode];
+    }
+    
+    var nodeIter = [selectedNodes objectEnumerator],
+        node = nil;
+    
+    while(node = [nodeIter nextObject])
+    {
+        [graph removeNode:node];
+    }
+    
 }
 @end
