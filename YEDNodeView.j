@@ -130,6 +130,12 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
     }
 }
 
+- (void)removeFromSuperview
+{
+    [self setIsSelected:NO];
+    [super removeFromSuperview];
+}
+
 - (void)mouseDown:(CPEvent)anEvent
 {
     dragLocation = [anEvent locationInWindow];
