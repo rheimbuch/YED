@@ -7,6 +7,7 @@
 @import "CPView+OffsetCorners.j"
 @import "YEDEditorView.j"
 @import "YEDNode.j"
+@import "YEDNodeViewConnector.j"
 
 YEDNodeViewDragType = "YEDNodeViewDragType";
 
@@ -21,6 +22,7 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
                     
     BOOL            isSelected              @accessors;
     YEDEditorView   editorView;
+    YEDNodeViewConnector connector;
 }
 
 - (id)initWithFrame:aFrame
@@ -30,9 +32,13 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
     {
         editorView = [[YEDEditorView alloc] initWithFrame:CPRectMakeZero()];
         
-        decorator = [[CPBox alloc] initWithFrame:(CPRectMake(0,0,
+        var bounds = [self bounds],
+            connectorSize = 9;
+
+        
+        decorator = [[CPBox alloc] initWithFrame:CPRectMake(0,0,
                                                         CPRectGetWidth(aFrame),
-                                                        CPRectGetHeight(aFrame)))];
+                                                        CPRectGetHeight(aFrame))];
         [decorator setAutoresizingMask:(CPViewWidthSizable | CPViewHeightSizable)];
         [decorator setBorderType:CPLineBorder];
         [self addSubview:decorator];
@@ -43,7 +49,13 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
         [contentView setAutoresizingMask:(CPViewWidthSizable | CPViewHeightSizable)];
         [decorator setContentView:contentView];
         
-        
+        connector = [[YEDNodeViewConnector alloc] initWithFrame:CPRectMake(CGRectGetMaxX(bounds)-connectorSize,
+                                                                            CGRectGetMaxY(bounds)-connectorSize,
+                                                                            connectorSize,
+                                                                            connectorSize)];
+        [connector setAutoresizingMask:(CPViewMinXMargin | CPViewMinYMargin)];
+        [connector setNodeView:self];
+        [self addSubview:connector]
         
         nameField = [CPTextField labelWithTitle:[self hash]];
         [nameField setValue:CPCenterTextAlignment forThemeAttribute:@"alignment"];
@@ -54,9 +66,9 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
         [nameField setCenter:[contentView convertPoint:[contentView center] fromView:nil]];
         [contentView addSubview:nameField];
         
-        
         [self setPostsFrameChangedNotifications:YES];
-        // representedObject = [YEDNode node];
+        
+        [self registerForDraggedTypes:[YEDNodeViewConnectorDragType]];
     }
     return self;
 }
@@ -123,10 +135,12 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
     {
         CPLog.trace("Activating Editor View");
         [editorView setNodeView:self];
+        [connector setHidden:NO];
     }
     else
     {
         [editorView setNodeView:nil];
+        [connector setHidden:YES];
     }
 }
 
@@ -167,6 +181,7 @@ var YEDNodeViewContentViewKey   = @"YEDNodeViewContentViewKey",
     YEDNodeViewNameFieldKey     = @"YEDNodeViewNameFieldKey",
     YEDNodeViewDecoratorKey     = @"YEDNodeViewDecoratorKey",
     YEDNodeViewEditorViewKey    = @"YEDNodeViewEditorViewKey",
+    YEDNodeViewConnectorKey     = @"YEDNodeViewConnectorKey",
     YEDNodeViewRepresentedObject = @"YEDNodeViewRepresentedObject";
 
 @implementation YEDNodeView (CPCoding)
@@ -180,9 +195,12 @@ var YEDNodeViewContentViewKey   = @"YEDNodeViewContentViewKey",
         nameField   = [coder decodeObjectForKey:YEDNodeViewNameFieldKey];
         decorator   = [coder decodeObjectForKey:YEDNodeViewDecoratorKey];
         editorView  = [coder decodeObjectForKey:YEDNodeViewEditorViewKey];
+        connector   = [coder decodeObjectForKey:YEDNodeViewConnectorKey];
+        [connector setNodeView:self];
         representedObject = [coder decodeObjectForKey:YEDNodeViewRepresentedObject];
         
         [self setPostsFrameChangedNotifications:YES];
+        [self registerForDraggedTypes:[YEDNodeViewConnectorDragType]];
     }
     return self;
 }
@@ -195,6 +213,7 @@ var YEDNodeViewContentViewKey   = @"YEDNodeViewContentViewKey",
     [coder encodeObject:nameField forKey:YEDNodeViewNameFieldKey];
     [coder encodeObject:decorator forKey:YEDNodeViewDecoratorKey];
     [coder encodeObject:editorView forKey:YEDNodeViewEditorViewKey];
+    [coder encodeObject:connector forKey:YEDNodeViewConnectorKey];
     [coder encodeObject:representedObject forKey:YEDNodeViewRepresentedObject];
 }
     
@@ -250,3 +269,4 @@ var YEDNodeViewContentViewKey   = @"YEDNodeViewContentViewKey",
             [decorator setFillColor:color];
     }
 @end
+
