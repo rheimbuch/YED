@@ -176,9 +176,9 @@ YEDGraphEdgeRemovedNotification = @"YEDGraphEdgeRemovedNotification"
             if([delegate respondsToSelector:@selector(didAddEdge:fromNode:toNode:inGraph:)])
                 [delegate didAddEdge:NO fromNode:fromNode toNode:toNode inGraph:self];
             
-            return;
+            throw(err);
         }
-        else if([err name] === KFNodeCycleException)
+        else if([err name] === YEDNodeCycleException)
         {
             if([delegate respondsToSelector:@selector(directedEdgeFromNode:toNode:wouldIntroduceCycleInGraph:)])
                 [delegate directedEdgeFromNode:fromNode toNode:toNode wouldIntroduceCycleInGraph:self];
@@ -194,7 +194,7 @@ YEDGraphEdgeRemovedNotification = @"YEDGraphEdgeRemovedNotification"
             if([delegate respondsToSelector:@selector(didAddEdge:fromNode:toNode:inGraph:)])
                 [delegate didAddEdge:NO fromNode:fromNode toNode:toNode inGraph:self];
             
-            return;
+            throw(err);
         }
         else
         {
