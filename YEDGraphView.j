@@ -24,9 +24,37 @@ YEDGraphViewEdgeViewRemovedNotification     = @"YEDGraphViewEdgeViewRemovedNotif
     return self;
 }
 
+- (CPArray)edgeViews
+{
+    var edgeViews   = [CPArray array],
+        viewIter    = [[self subviews] objectEnumerator],
+        view        = nil;
+    
+    while(view = [viewIter nextObject])
+    {
+        if([view isKindOfClass:YEDEdgeView])
+            [edgeViews addObject:view];
+    }
+    return edgeViews;
+}
+
+- (CPArray)nodeViews
+{
+    var nodeViews   = [CPArray array],
+        viewIter    = [[self subviews] objectEnumerator],
+        view        = nil;
+    
+    while(view = [viewIter nextObject])
+    {
+        if([view isKindOfClass:YEDNodeView])
+            [nodeViews addObject:view];
+    }
+    return nodeViews;
+}
+
 - (void)addNodeView:(YEDNodeView)aNodeView
 {
-    if([[self subviews] containsObject:aNodeView])
+    if([[self nodeViews] containsObject:aNodeView])
         return;
     
     [self addSubview:aNodeView];
@@ -42,7 +70,7 @@ YEDGraphViewEdgeViewRemovedNotification     = @"YEDGraphViewEdgeViewRemovedNotif
 
 - (void)removeNodeView:(YEDNodeView)aNodeView
 {
-    if(![[self subviews] containsObject:aNodeView])
+    if(![[self nodeViews] containsObject:aNodeView])
         return;
     [aNodeView removeFromSuperview];
     
@@ -57,11 +85,40 @@ YEDGraphViewEdgeViewRemovedNotification     = @"YEDGraphViewEdgeViewRemovedNotif
 
 - (void)addEdgeView:(YEDEdgeView)edgeView
 {
-    if([[self subviews] containsObject:edgeView])
+    CPLog.trace("YEDGraphView: addEdgeView: starting");
+    console.debug(edgeView);
+    if([[self edgeViews] containsObject:edgeView])
+    {
+        console.debug("edgeView aready in graphView");
         return;
+    }
     
+    // var subViews = [self subviews],
+    //     viewIter = [subViews objectEnumerator],
+    //     subView = nil;
+    // while(subView = [viewIter nextObject])
+    // {
+    //     if([subView isKindOfClass:YEDEdgeView])
+    //     {
+    //         // If an equivalent edgeview is already in the graphview, bail
+    //         if([subView startNodeView] === [edgeView startNodeView] && [subView endNodeView] === [edgeView endNodeView])
+    //         {
+    //             console.trace("YEDGraphView: addEdgeView: found an equivalent edgeview in the graphview");
+    //             console.debug(subView);
+    //             console.debug(edgeView);
+    //             return;
+    //         }
+    //     }
+    // }
+    
+    CPLog.trace("YEDGraphView: addEdgeView: adding edge view");
+    [[edgeView startNodeView] removeFromSuperview];
+    [[edgeView endNodeView] removeFromSuperview];
     [self addSubview:edgeView];
+    [self addSubview:[edgeView startNodeView]];
+    [self addSubview:[edgeView endNodeView]];
     
+    CPLog.trace("YEDGraphView: addEdgeView: sending notification");
     [[CPNotificationCenter defaultCenter] 
         postNotificationName:YEDGraphViewEdgeViewAddedNotification
         object:self
@@ -74,7 +131,7 @@ YEDGraphViewEdgeViewRemovedNotification     = @"YEDGraphViewEdgeViewRemovedNotif
 
 - (void)removeEdgeView:(YEDEdgeView)edgeView
 {
-    if(![[self subviews] containsObject:edgeView])
+    if(![[self edgeViews] containsObject:edgeView])
         return
         
     [edgeView removeFromSuperview];
