@@ -113,29 +113,29 @@ YEDNodeGraphHasCycles = function(aNode, traverseParents)
     return YES;
 }
 
-- (BOOL)isEqual:(id)other
-{
-    if(other === self)
-        return YES;
-    if(!other || ![other isKindOfClass:[self class]])
-        return NO
-    return [self isEqualToNode:other];
-}
-
-- (BOOL)isEqualToNode:(YEDNode)otherNode
-{
-    if(otherNode === self)
-        return YES;
-    if(![[self name] isEqual:[otherNode name]])
-        return NO;
-    if(![[self isAcyclic] isEqual:[otherNode isAcyclic]])
-        return NO;
-    if(![[self allowsConnectionsTo] isEqualToSet:[otherNode allowsConnectionsTo]])
-        return NO;
-    if(![[self allowsConnectionsFrom] isEqualToSet:[otherNode allowsConnectionsFrom]])
-        return NO;
-    return YES;
-}
+// - (BOOL)isEqual:(id)other
+// {
+//     if(other === self)
+//         return YES;
+//     if(!other || ![other isKindOfClass:[self class]])
+//         return NO
+//     return [self isEqualToNode:other];
+// }
+// 
+// - (BOOL)isEqualToNode:(YEDNode)otherNode
+// {
+//     if(otherNode === self)
+//         return YES;
+//     if(![[self name] isEqual:[otherNode name]])
+//         return NO;
+//     if(![[self isAcyclic] isEqual:[otherNode isAcyclic]])
+//         return NO;
+//     if(![[self allowsConnectionsTo] isEqualToSet:[otherNode allowsConnectionsTo]])
+//         return NO;
+//     if(![[self allowsConnectionsFrom] isEqualToSet:[otherNode allowsConnectionsFrom]])
+//         return NO;
+//     return YES;
+// }
 
 - (BOOL)hasOutgoingEdgeTo:(YEDNode)otherNode
 {
