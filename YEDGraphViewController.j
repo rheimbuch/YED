@@ -44,7 +44,7 @@
     
     
     [nodeViews removeAllObjects];
-    [[self view] removeAllNodeViews];
+    [[self view] removeAllSubviews];
     
     var nodeIter = [[[self representedObject] nodes] objectEnumerator];
     var node = nil;

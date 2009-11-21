@@ -146,7 +146,7 @@ YEDGraphViewEdgeViewRemovedNotification     = @"YEDGraphViewEdgeViewRemovedNotif
         }]];
 }
 
-- (void)removeAllNodeViews
+- (void)removeAllSubviews
 {
     var viewIter = [[self subviews] objectEnumerator];
     var view = nil;
