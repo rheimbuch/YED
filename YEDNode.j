@@ -67,8 +67,8 @@ YEDNodeGraphHasCycles = function(aNode, traverseParents)
     {
         outEdges = [CPSet set];
         inEdges = [CPSet set];
-        allowsConnectionsTo = [CPSet setWithObject:[self class]];
-        allowsConnectionsFrom = [CPSet setWithObject:[self class]];
+        allowsConnectionsTo = [CPSet setWithObject:[self className]];
+        allowsConnectionsFrom = [CPSet setWithObject:[self className]];
         isAcyclic = NO;
     }
     return self;
@@ -181,7 +181,7 @@ YEDNodeGraphHasCycles = function(aNode, traverseParents)
     else
     {
         CPLog.warn("directedEdgeTo: %s not allowed to connect to %s", [self name], [otherNode name]);      
-        [CPException raise:YEDNodeNotAllowedException reason:"Node is not allowed to be added."];
+        [CPException raise:YEDNodeNotAllowedException reason:"Connecting to this node type is not allowed."];
     }
 }
 
@@ -224,7 +224,7 @@ YEDNodeGraphHasCycles = function(aNode, traverseParents)
     var allowToIter = [allowsConnectionsTo objectEnumerator];
     
     var allowedNodeClass = nil;
-    while(allowedNodeClass = [allowToIter nextObject])
+    while(allowedNodeClass = objj_lookUpClass([allowToIter nextObject]))
     {
         if([otherNode isKindOfClass:allowedNodeClass])
             allowTo = true;
@@ -236,7 +236,7 @@ YEDNodeGraphHasCycles = function(aNode, traverseParents)
     var allowFromIter = [[otherNode allowsConnectionsFrom] objectEnumerator];
     
     var allowedNodeClass = nil;
-    while(allowedNodeClass = [allowFromIter nextObject])
+    while(allowedNodeClass = objj_lookUpClass([allowFromIter nextObject]))
     {
         if([self isKindOfClass:allowedNodeClass])
             allowFrom = true;
@@ -295,10 +295,10 @@ var YEDNodeNameKey = @"YEDNodeNameKey",
     {
         name        = [coder decodeObjectForKey:YEDNodeNameKey];
         isAcyclic   = [coder decodeObjectForKey:YEDNodeIsAcyclicKey];
-        // outEdges    = [coder decodeObjectForKey:YEDNodeOutEdgesKey];
-        // inEdges     = [coder decodeObjectForKey:YEDNodeInEdgesKey];
-        // allowsConnectionsTo     = [coder decodeObjectForKey:YEDNodeAllowsConnectionsToKey];
-        // allowsConnectionsFrom   = [coder decodeObjectForKey:YEDNodeAllowsConnectionsFromKey];
+        outEdges    = [coder decodeObjectForKey:YEDNodeOutEdgesKey];
+        inEdges     = [coder decodeObjectForKey:YEDNodeInEdgesKey];
+        allowsConnectionsTo     = [coder decodeObjectForKey:YEDNodeAllowsConnectionsToKey];
+        allowsConnectionsFrom   = [coder decodeObjectForKey:YEDNodeAllowsConnectionsFromKey];
     }
     return self;
 }
@@ -309,9 +309,9 @@ var YEDNodeNameKey = @"YEDNodeNameKey",
     
     [coder encodeObject:name forKey:YEDNodeNameKey];
     [coder encodeObject:isAcyclic forKey:YEDNodeIsAcyclicKey];
-    // [coder encodeObject:outEdges forKey:YEDNodeOutEdgesKey];
-    // [coder encodeObject:inEdges forKey:YEDNodeInEdgesKey];
-    // [coder encodeObject:allowsConnectionsTo forKey:YEDNodeOutEdgesKey];
-    // [coder encodeObject:allowsConnectionsFrom forKey:YEDNodeInEdgesKey];
+    [coder encodeObject:outEdges forKey:YEDNodeOutEdgesKey];
+    [coder encodeObject:inEdges forKey:YEDNodeInEdgesKey];
+    [coder encodeObject:allowsConnectionsTo forKey:YEDNodeAllowsConnectionsToKey];
+    [coder encodeObject:allowsConnectionsFrom forKey:YEDNodeAllowsConnectionsFromKey];
 }
 @end

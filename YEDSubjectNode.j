@@ -12,10 +12,10 @@
     if(self)
     {
         [[self allowsConnectionsFrom] removeAllObjects];
-        [[self allowsConnectionsFrom] addObject:YEDOperationNode];
+        [[self allowsConnectionsFrom] addObject:[YEDOperationNode className]];
         
         [[self allowsConnectionsTo] removeAllObjects];
-        [[self allowsConnectionsTo] addObject:YEDOperationNode];
+        [[self allowsConnectionsTo] addObject:[YEDOperationNode className]];
         
         [self setIsAcyclic:YES];
     }
