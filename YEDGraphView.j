@@ -157,6 +157,13 @@ YEDGraphViewEdgeViewRemovedNotification     = @"YEDGraphViewEdgeViewRemovedNotif
     }
 }
 
+- (void)connectNodeView:(YEDNodeView)startView toNodeView:(YEDNodeView)endView
+{
+    CPLog.trace("YEDGraphView: connectNodeView");
+    var edgeView = [YEDEdgeView edgeFromView:startView toView:endView];
+    [self addEdgeView:edgeView];
+}
+
 - (void)performDragOperation:(CPDraggingInfo)aSender
 {
     CPLog.trace("YEDGraphView: performDragOperation:");
