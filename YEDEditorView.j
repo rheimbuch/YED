@@ -8,7 +8,7 @@ var SharedEditorView            = nil,
     HandleSize                  = 10.0,
     HandleSlop                  = 20.0,
     Margin                      = 15.0,
-    Padding                     = 10.0;
+    Padding                     = 5.0;
 
 var topLeftHandle       = CGRectMakeZero(),
     topRightHandle      = CGRectMakeZero(),
