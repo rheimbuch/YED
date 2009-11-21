@@ -83,6 +83,24 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
     return self;
 }
 
+- (BOOL)isEqual:(id)other
+{
+    if(other === self)
+        return YES;
+    if(!other || ![other isKindOfClass:[self class]])
+        return NO
+    return [self isEqualToNodeView:other];
+}
+
+- (BOOL)isEqualToNodeView:(YEDNodeView)otherView
+{
+    if(otherView === self)
+        return YES;
+    if(![[self representedObject] isEqual:[otherView representedObject]])
+        return NO;
+    return YES;
+}
+
 - (CPString)name
 {
     return [representedObject name];
@@ -109,7 +127,7 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
     console.debug(self);
     [nameField setStringValue:[representedObject name]];
     [nameField sizeToFit];
-    [nameField setCenter:[contentView convertPoint:[contentView center] fromView:nil]];
+    [nameField setCenter:[contentView convertPoint:[contentView center] fromView:decorator]];
     
     [self setNeedsDisplay:YES];
 }
@@ -173,7 +191,29 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
     dragLocation = location;
 }
 
+- (void)mouseUp:(CPEvent)anEvent
+{
+    // Handle double-click
+    if([anEvent clickCount] == 2)
+    {
+        var newName = prompt("Node Name: ", [[self representedObject] name]);
+        if(newName && newName !== [[self representedObject] name])
+        {
+            [[self representedObject] setName:newName];
+            [self syncWithRepresentedObject];
+        }
+    }
+}
 
+- (void)performDragOperation:(CPDraggingInfo)aSender
+{
+    CPLog.trace("YEDNodeView: performDragOperation:");
+    console.debug([aSender draggingSource]);
+    var source = [aSender draggingSource];
+    // var nodeView = [CPKeyedUnarchiver unarchiveObjectWithData:[[aSender draggingPasteboard] dataForType:YEDNodeViewConnectorDragType]];
+    var nodeView = [[aSender draggingSource] nodeView];
+    [[self superview] connectNodeView:nodeView toNodeView:self];
+}
 
 @end
 

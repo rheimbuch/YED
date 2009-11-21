@@ -87,6 +87,26 @@ var Padding = 20;
     return self;
 }
 
+- (BOOL)isEqual:(id)other
+{
+    if(other === self)
+        return YES;
+    if(!other || ![other isKindOfClass:[self class]])
+        return NO
+    return [self isEqualToEdgeView:other];
+}
+
+- (BOOL)isEqualToEdgeView:(YEDEdgeView)otherView
+{
+    if(otherView === self)
+        return YES;
+    if(![[self startNodeView] isEqual:[otherView startNodeView]])
+        return NO;
+    if(![[self endNodeView] isEqual:[otherView endNodeView]])
+        return NO;
+    return YES;
+}
+
 - (void)setStartNodeView:(YEDNodeView)start
 {
     if(startNodeView === start)
@@ -114,14 +134,14 @@ var Padding = 20;
         
         [self nodeViewFrameChanged:nil];
         
-        [[startNodeView superview] addSubview:self];
-        [[startNodeView superview] addSubview:startNodeView];
-        if(endNodeView)
-            [[endNodeView superview] addSubview:endNodeView];
+        // [[startNodeView superview] addSubview:self];
+        // [[startNodeView superview] addSubview:startNodeView];
+        // if(endNodeView)
+        //     [[endNodeView superview] addSubview:endNodeView];
     }
     else
     {
-        [self removeFromSuperview];
+        // [self removeFromSuperview];
     }
 }
 
@@ -152,14 +172,14 @@ var Padding = 20;
         
         [self nodeViewFrameChanged:nil];
         
-        [[endNodeView superview] addSubview:self];
-        [[endNodeView superview] addSubview:endNodeView];
-        if(startNodeView)
-            [[startNodeView superview] addSubview:startNodeView];
+        // [[endNodeView superview] addSubview:self];
+        // [[endNodeView superview] addSubview:endNodeView];
+        // if(startNodeView)
+        //     [[startNodeView superview] addSubview:startNodeView];
     }
     else
     {
-        [self removeFromSuperview];
+        // [self removeFromSuperview];
     }
 }
 
