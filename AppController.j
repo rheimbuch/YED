@@ -75,18 +75,18 @@ CPLogRegister(CPLogConsole);
     
     
     
-    console.debug("Registry");
-    console.debug(registry);
+    //console.debug("Registry");
+    //console.debug(registry);
     
-    rat1 = [YEDSubjectNode nodeWithName:"Rat1"];
-    [graph addNode:rat1];
-    fed1 = [YEDOperationNode nodeWithName:"Fed 5cc glucose"];
-    [graph addNode:fed1];
-    fedRat1 = [YEDSubjectNode nodeWithName:"Rat1 Fed"];
-    [graph addNode:fedRat1];
-    
-    [graph createDirectedEdgeFrom:rat1 to:fed1];
-    [graph createDirectedEdgeFrom:fed1 to:fedRat1];
+    // rat1 = [YEDSubjectNode nodeWithName:"Rat1"];
+    // [graph addNode:rat1];
+    // fed1 = [YEDOperationNode nodeWithName:"Fed 5cc glucose"];
+    // [graph addNode:fed1];
+    // fedRat1 = [YEDSubjectNode nodeWithName:"Rat1 Fed"];
+    // [graph addNode:fedRat1];
+    // 
+    // [graph createDirectedEdgeFrom:rat1 to:fed1];
+    // [graph createDirectedEdgeFrom:fed1 to:fedRat1];
 
     
     
@@ -103,7 +103,7 @@ CPLogRegister(CPLogConsole);
     
     preparedNodeViews = [[registry viewFor:[YEDOperationNode nodeWithName:@"Operation"]], [registry viewFor:[YEDSubjectNode nodeWithName:@"Subject"]]];
     [nodeCollectionView setContent:preparedNodeViews];
-    console.debug(nodeCollectionView);
+    //console.debug(nodeCollectionView);
     
 }
 

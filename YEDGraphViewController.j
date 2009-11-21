@@ -153,7 +153,7 @@
     
     var view = [self viewForNode:node] || [nodeViewRegistry viewFor:node];
     CPLog.trace("YEDGraphViewController: addNodeToView:")
-    console.debug(view);
+    //console.debug(view);
     
     // If the nodeView is already in the graphView, bail
     if([[[self view] nodeViews] containsObject:view])
@@ -183,7 +183,7 @@
         return;
     // Find the nodeview associated with this node and remove it
     var view = [self viewForNode:node];
-    console.debug(view);
+    //console.debug(view);
     [view removeFromSuperview];
 }
 
@@ -221,7 +221,7 @@
 - (void)addEdgeToViewFrom:(YEDNode)start to:(YEDNode)end
 {
     CPLog.trace("YEDGraphViewController: addEdgeToViewFrom:to:");
-    console.debug(start, end);
+    //console.debug(start, end);
     CPLog.trace([[self graph] containsEdgeFromNode:start toNode:end]);
     if(![[self graph] containsEdgeFromNode:start toNode:end] || viewAlreadyAdded)
         return;
@@ -244,7 +244,7 @@
         return;
     
     CPLog.trace("YEDGraphViewController: addEdgeToViewFrom:to: creating Edge View");
-    console.debug([self viewForEdgeFromNode:start toNode:end]);
+    //console.debug([self viewForEdgeFromNode:start toNode:end]);
     var edgeView = [self viewForEdgeFromNode:start toNode:end] || [YEDEdgeView edgeFromView:startView toView:endView];
     
     if(![[self edgeViews] containsObject:edgeView])
@@ -397,8 +397,8 @@
     catch(err)
     {
         CPLog.warn(err);
-        console.debug(startNode);
-        console.debug(endNode);
+        //console.debug(startNode);
+        //console.debug(endNode);
         alert(err);
         [edgeView removeFromSuperview];
         viewAlreadyAdded = NO;
@@ -429,7 +429,7 @@
  */
 - (CPArray)selectedViews
 {
-    console.debug([[[selectionManager selectedItems] allObjects] copy]);
+    //console.debug([[[selectionManager selectedItems] allObjects] copy]);
     return [[[selectionManager selectedItems] allObjects] copy];
 }
 
@@ -481,9 +481,9 @@
     var graph = [self representedObject],
         selectedEdgeViews = [self selectedEdgeViews],
         selectedNodes = [self selectedNodes];
-    console.debug(graph);
-    console.debug(selectedEdgeViews);
-    console.debug(selectedNodes);
+    //console.debug(graph);
+    //console.debug(selectedEdgeViews);
+    //console.debug(selectedNodes);
     var edgeViewIter = [selectedEdgeViews objectEnumerator],
         edgeView = nil,
         edgeStartNode = nil,

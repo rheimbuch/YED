@@ -61,8 +61,8 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
         [nameField setValue:CPCenterTextAlignment forThemeAttribute:@"alignment"];
         [nameField setCenter:[self convertPoint:[self center] fromView:nil]];
         [nameField setAutoresizingMask:(CPViewMinXMargin | CPViewMaxXMargin | CPViewMinYMargin | CPViewMaxYMargin)];
-        // console.log("NodeView Center:");
-        // console.log([self center]);
+        // //console.log("NodeView Center:");
+        // //console.log([self center]);
         [nameField setCenter:[contentView convertPoint:[contentView center] fromView:nil]];
         [contentView addSubview:nameField];
         
@@ -124,7 +124,7 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
     CPLog.trace("NodeView is updating from representedObject");
     CPLog.trace("NodeView nameField was: " + [nameField stringValue]);
     CPLog.trace("Node name is: " + [representedObject name]);
-    console.debug(self);
+    //console.debug(self);
     [nameField setStringValue:[representedObject name]];
     [nameField sizeToFit];
     [nameField setCenter:[contentView convertPoint:[contentView center] fromView:decorator]];
@@ -208,7 +208,7 @@ YEDNodeViewDragType = "YEDNodeViewDragType";
 - (void)performDragOperation:(CPDraggingInfo)aSender
 {
     CPLog.trace("YEDNodeView: performDragOperation:");
-    console.debug([aSender draggingSource]);
+    //console.debug([aSender draggingSource]);
     var source = [aSender draggingSource];
     // var nodeView = [CPKeyedUnarchiver unarchiveObjectWithData:[[aSender draggingPasteboard] dataForType:YEDNodeViewConnectorDragType]];
     var nodeView = [[aSender draggingSource] nodeView];

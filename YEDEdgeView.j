@@ -307,14 +307,14 @@ var Padding = 20;
     var intersection = intersectLineRect([startNodeView center], [endNodeView center], [endNodeView frame]);
     if(intersection.type === "intersection")
     {
-        // console.log(intersection);
+        // //console.log(intersection);
         var pt = intersection.points[0];
-        // console.log(pt);
+        // //console.log(pt);
         // var point = [self convertPoint:CGPointMake(pt.x,pt.y) fromView:nil];
         var point = [self convertPoint:CGPointMake(pt.x,pt.y) fromView:[self superview]];
         // CPLog.trace("Marker at: ("+point.x+", "+point.y+")");
         var markerRect = CGRectMake(point.x-7,point.y-7,14,14);
-        console.debug(markerRect);
+        //console.debug(markerRect);
         CGContextSetFillColor(context, [self strokeColor]);
         CGContextFillEllipseInRect(context, markerRect);
         

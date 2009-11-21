@@ -86,10 +86,10 @@ YEDGraphViewEdgeViewRemovedNotification     = @"YEDGraphViewEdgeViewRemovedNotif
 - (void)addEdgeView:(YEDEdgeView)edgeView
 {
     CPLog.trace("YEDGraphView: addEdgeView: starting");
-    console.debug(edgeView);
+    //console.debug(edgeView);
     if([[self edgeViews] containsObject:edgeView])
     {
-        console.debug("edgeView aready in graphView");
+        //console.debug("edgeView aready in graphView");
         return;
     }
     
@@ -103,9 +103,9 @@ YEDGraphViewEdgeViewRemovedNotification     = @"YEDGraphViewEdgeViewRemovedNotif
     //         // If an equivalent edgeview is already in the graphview, bail
     //         if([subView startNodeView] === [edgeView startNodeView] && [subView endNodeView] === [edgeView endNodeView])
     //         {
-    //             console.trace("YEDGraphView: addEdgeView: found an equivalent edgeview in the graphview");
-    //             console.debug(subView);
-    //             console.debug(edgeView);
+    //             //console.trace("YEDGraphView: addEdgeView: found an equivalent edgeview in the graphview");
+    //             //console.debug(subView);
+    //             //console.debug(edgeView);
     //             return;
     //         }
     //     }
