@@ -6,10 +6,9 @@
 
 @implementation YEDGraphViewController : CPViewController 
 {
-    CPArray                 nodeViews;
     YEDNodeViewRegistry     nodeViewRegistry    @accessors;
-    CPArray                 edgeViews;
     YEDSelectionManager     selectionManager    @accessors;
+    BOOL                    viewAlreadyAdded;
 }
 
 - (id)init
@@ -17,9 +16,8 @@
     self = [super init];
     if(self)
     {
-        nodeViews = [];
         nodeViewRegistry = [YEDNodeViewRegistry registry];
-        edgeViews = [];
+        viewAlreadyAdded = NO;
     }
     return self;
 }
@@ -42,8 +40,6 @@
     if(!_representedObject)
         return;
     
-    
-    [nodeViews removeAllObjects];
     [[self view] removeAllSubviews];
     
     var nodeIter = [[[self representedObject] nodes] objectEnumerator];
@@ -58,8 +54,6 @@
         
         while(endNode = [edgeIter nextObject])
         {
-            if(![self viewForNode:endNode])
-                [self addNodeToView:endNode];
             [self addEdgeToViewFrom:node to:endNode];
         }
     }
@@ -141,17 +135,28 @@
             object:[self view]];
 }
 
+- (CPArray)nodeViews
+{
+    return [[self view] nodeViews];
+}
+
+- (CPArray)edgeViews
+{
+    return [[self view] edgeViews];
+}
 
 - (void)addNodeToView:(YEDNode)node
 {
     // If the node isn't already in the graph, we don't want to add it to the view
-    if(![[self graph] containsNode:node])
+    if(![[self graph] containsNode:node] || viewAlreadyAdded)
         return;
     
     var view = [self viewForNode:node] || [nodeViewRegistry viewFor:node];
+    CPLog.trace("YEDGraphViewController: addNodeToView:")
+    console.debug(view);
     
     // If the nodeView is already in the graphView, bail
-    if([[[self view] subviews] containsObject:view])
+    if([[[self view] nodeViews] containsObject:view])
         return;
     
     var graphCenter = [[self view] center];
@@ -167,50 +172,41 @@
     
     var origin = [view frameOrigin];
     [view setFrameOrigin:randPointShift(origin, 200)];
-    [nodeViews addObject:view];
     [[self view] addNodeView:view];
 }
 
 - (void)removeNodeFromView:(YEDNode)node
 {
+    CPLog.trace("YEDGraphViewController: removeNodeFromView:")
     // If the node is still in the graph, we don't want to remove it from the view
     if([[self graph] containsNode:node])
         return;
     // Find the nodeview associated with this node and remove it
-    var viewIter = [nodeViews objectEnumerator];
-    var view = nil
-    while(view = [viewIter nextObject])
-    {
-        if([view representedObject] === node)
-        {
-            [view removeFromSuperview];
-            [nodeViews removeObject:view];
-            [view setRepresentedObject:nil];
-            
-            return;
-        }
-    }
+    var view = [self viewForNode:node];
+    console.debug(view);
+    [view removeFromSuperview];
 }
 
 - (YEDNodeView)viewForNode:(YEDNode)node
 {
-    if(![[self graph] containsNode:node])
-        return;
+    // if(![[self graph] containsNode:node])
+    //     return;
     
-    var viewIter = [nodeViews objectEnumerator];
+    var viewIter = [[self nodeViews] objectEnumerator];
     var view = nil
     while(view = [viewIter nextObject])
     {
-        if([view representedObject] === node)
+        if([[view representedObject] isEqual:node])
         {
             return view;
         }
     }
+    return nil;
 }
 
 - (YEDEdgeView)viewForEdgeFromNode:(YEDNode)start toNode:(YEDNode)end
 {
-    var viewIter = [edgeViews objectEnumerator],
+    var viewIter = [[self edgeViews] objectEnumerator],
         view = nil;
     
     while(view = [viewIter nextObject])
@@ -227,22 +223,31 @@
     CPLog.trace("YEDGraphViewController: addEdgeToViewFrom:to:");
     console.debug(start, end);
     CPLog.trace([[self graph] containsEdgeFromNode:start toNode:end]);
-    if(![[self graph] containsEdgeFromNode:start toNode:end])
+    if(![[self graph] containsEdgeFromNode:start toNode:end] || viewAlreadyAdded)
         return;
     
     CPLog.trace("YEDGraphViewController: addEdgeToViewFrom:to: retrieving views");
     var startView = [self viewForNode:start],
         endView = [self viewForNode:end];
-    
+    if(!startView)
+    {
+        [self addNodeToView:start];
+        startView = [self viewForNode:start];
+    }
+    if(!endView)
+    {
+        [self addNodeToView:end];
+        endView = [self viewForNode:end];
+    }
+
     if(!startView || !endView)
         return;
     
     CPLog.trace("YEDGraphViewController: addEdgeToViewFrom:to: creating Edge View");
+    console.debug([self viewForEdgeFromNode:start toNode:end]);
     var edgeView = [self viewForEdgeFromNode:start toNode:end] || [YEDEdgeView edgeFromView:startView toView:endView];
     
-    if(![edgeViews containsObject:edgeView])
-        [edgeViews addObject:edgeView];
-    if(![[[self view] subviews] containsObject:edgeView])
+    if(![[self edgeViews] containsObject:edgeView])
         [[self view] addEdgeView:edgeView];
 }
 
@@ -257,18 +262,14 @@
     if(!startView || !endView)
         return;
     
-    var viewIter = [edgeViews objectEnumerator],
-        view = nil;
+    var view = [self viewForEdgeFromNode:start toNode:end];
         
-    while(view = [viewIter nextObject])
+
+    if([view startNodeView] === startView && [view endNodeView] === endView)
     {
-        if([view startNodeView] === startView && [view endNodeView] === endView)
-        {
-            [edgeViews removeObject:view];
-            [view setStartNodeView:nil];
-            [view setEndNodeView:nil];
-            [view removeFromSuperview];
-        }
+        [view setStartNodeView:nil];
+        [view setEndNodeView:nil];
+        [view removeFromSuperview];
     }
 }
 
@@ -351,8 +352,9 @@
     
     if(![[self representedObject] containsNode:node])
     {
-        [nodeViews addObject:nodeView];
+        viewAlreadyAdded = YES;
         [[self representedObject] addNode:node];
+        viewAlreadyAdded = NO;
     }
 }
 
@@ -372,7 +374,6 @@
     
     if([[self representedObject] containsNode:node])
     {
-        [nodeViews removeObject:nodeView];
         [[self representedObject] removeNode:node];
     }
 }
@@ -387,7 +388,21 @@
         startNode = [[notification userInfo] valueForKey:@"startNode"],
         endNode   = [[notification userInfo] valueForKey:@"endNode"];
     
-    [graph createDirectedEdgeFrom:startNode to:endNode];
+    try
+    {
+        viewAlreadyAdded = YES;
+        [graph createDirectedEdgeFrom:startNode to:endNode];
+        viewAlreadyAdded = NO;
+    }
+    catch(err)
+    {
+        CPLog.warn(err);
+        console.debug(startNode);
+        console.debug(endNode);
+        alert(err);
+        [edgeView removeFromSuperview];
+        viewAlreadyAdded = NO;
+    }
 }
 
 - (void)graphViewEdgeViewRemoved:(CPNotification)notification
