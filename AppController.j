@@ -16,6 +16,7 @@
 @import "YEDNodeViewRegistry.j"
 @import "YEDOperationNode.j"
 @import "YEDSubjectNode.j"
+@import "YEDNodeViewCollectionItem.j"
 
 
 CPLogRegister(CPLogConsole);
@@ -97,7 +98,7 @@ CPLogRegister(CPLogConsole);
     [nodeCollectionView setMaxItemSize:CGSizeMake(10000, 50)];
     // [sideView addSubview:nodeCollectionView];
     var nodeItemPrototype = [[CPCollectionViewItem alloc] init];
-    [nodeItemPrototype setView:[[NodeViewCollectionItem alloc] initWithFrame:CGRectMakeZero()]];
+    [nodeItemPrototype setView:[[YEDNodeViewCollectionItem alloc] initWithFrame:CGRectMakeZero()]];
     [nodeCollectionView setItemPrototype:nodeItemPrototype];
     [nodeCollectionView setDelegate:self];
     
@@ -146,27 +147,4 @@ CPLogRegister(CPLogConsole);
 
 @end
 
-@implementation NodeViewCollectionItem : CPView
-{
-    CPTextField nameField;
-}
 
-- (void)setRepresentedObject:(id)object
-{
-    if(!nameField)
-    {
-        nameField = [[CPTextField alloc] initWithFrame:CGRectMake(50,15,145,20)];
-        [nameField setFont:[CPFont boldSystemFontOfSize:12.0]];
-        [self addSubview:nameField];
-    }
-    
-    [nameField setStringValue:[[object representedObject] name]];
-}
-
-- (void)setSelected:(BOOL)isSelected
-{
-    [self setBackgroundColor:isSelected ? [CPColor blueColor] : nil];
-    [nameField setTextColor:isSelected ? [CPColor whiteColor] : [CPColor blackColor]];
-}
-
-@end
