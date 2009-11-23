@@ -278,7 +278,7 @@ var Padding = 20;
     }
 }
 
-- (id)drawRect:(CGRect)rect
+- (void)drawRect:(CGRect)rect
 {
     // CPLog.trace("YEDEdgeView drawRect:");
     if(!startNodeView || !endNodeView)
@@ -291,33 +291,102 @@ var Padding = 20;
         context = [[CPGraphicsContext currentContext] graphicsPort];
     
     
-    CGContextSetStrokeColor(context, [self strokeColor]);
-    CGContextSetLineWidth(context, 3.0);
-    
-    var path = [CPBezierPath bezierPath];
-    [path setLineWidth:2.0];
-    [path moveToPoint:startPoint];
-    [path lineToPoint:endPoint];
-    
-    [path stroke];
-    
+
     
     
 
     var intersection = intersectLineRect([startNodeView center], [endNodeView center], [endNodeView frame]);
     if(intersection.type === "intersection")
     {
-        // //console.log(intersection);
-        var pt = intersection.points[0];
-        // //console.log(pt);
-        // var point = [self convertPoint:CGPointMake(pt.x,pt.y) fromView:nil];
-        var point = [self convertPoint:CGPointMake(pt.x,pt.y) fromView:[self superview]];
-        // CPLog.trace("Marker at: ("+point.x+", "+point.y+")");
-        var markerRect = CGRectMake(point.x-7,point.y-7,14,14);
-        //console.debug(markerRect);
-        CGContextSetFillColor(context, [self strokeColor]);
-        CGContextFillEllipseInRect(context, markerRect);
         
+        var pt = intersection.points[0];
+        var point = [self convertPoint:CGPointMake(pt.x,pt.y) fromView:[self superview]];
+        var arrowLength = 10;
+        
+        
+        CGContextSetStrokeColor(context, [self strokeColor]);
+        CGContextSetFillColor(context, [self strokeColor]);
+        CGContextSetLineWidth(context, 3.0);
+
+        var path = [CPBezierPath bezierPath];
+        [path setLineWidth:2.0];
+        [path moveToPoint:startPoint];
+        [path lineToPoint:point];
+
+        [path stroke];
+        
+        
+        // Draw arrow end point
+        
+        
+        var aTan2FromOrigin = function(x, y, oX, oY)
+        {
+            oX = oX || 0;
+            oY = oY || 0;
+            
+            var dx = x - oX,
+                dy = y - oY;
+            
+            var angle = 0;
+            
+            if(dx > 0)
+            {
+                angle = Math.atan(dy/dx);
+            }
+            else if(dy >= 0 && dx < 0)
+            {
+                angle = Math.PI + Math.atan(dy/dx);
+            }
+            else if(dy < 0 && dx < 0)
+            {
+                angle = -Math.PI + Math.atan(dy/dx);
+            }
+            else if(dy > 0 && dx == 0)
+            {
+                angle = Math.PI/2;
+            }
+            else if(dy < 0 && dx == 0)
+            {
+                angle = -Math.PI/2;
+            }
+            else if(dy == 0 && dx ==0)
+            {
+                angle = 0;
+            }
+            
+            return angle;
+        }
+        
+        with(Math)
+        {
+            var x1 = startPoint.x,
+                y1 = startPoint.y,
+                x2 = point.x,
+                y2 = point.y;            
+
+            var lineAngle = aTan2FromOrigin(x2,y2,x1,y1),
+                arrowAngle1 = lineAngle + 45*PI/180,
+                arrowAngle2 = lineAngle - 45*PI/180;
+            
+            var x3 = x2 - arrowLength * cos(arrowAngle1),
+                y3 = y2 - arrowLength * sin(arrowAngle1),
+                x4 = x2 - arrowLength * cos(arrowAngle2),
+                y4 = y2 - arrowLength * sin(arrowAngle2);
+            
+            var arrowPath1 = [CPBezierPath bezierPath];
+            [arrowPath1 setLineWidth:2.0];
+            [arrowPath1 moveToPoint:CGPointMake(x2,y2)];
+            [arrowPath1 lineToPoint:CGPointMake(x3,y3)];
+            [arrowPath1 lineToPoint:CGPointMake(x4,y4)];
+            [arrowPath1 closePath];
+            [arrowPath1 fill];
+            
+            // var arrowPath2 = [CPBezierPath bezierPath];
+            // [arrowPath2 setLineWidth:2.0];
+            // [arrowPath2 moveToPoint:CGPointMake(x2,y2)];
+            // [arrowPath2 lineToPoint:CGPointMake(x4,y4)];
+            // [arrowPath2 fill];
+        }
     }
 }
 
