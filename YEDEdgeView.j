@@ -223,7 +223,8 @@ var Padding = 20;
     var Y = slope*(x - A.x) + A.y;
     var X = (y - A.y)/slope + A.x
     
-    return ((Y-10 <= y) && (y <= Y+10)) || ((X-10 <= x) && (x <= X+10));
+    return ((X <= MAX(A.x,B.x)) && (X >= MIN(A.x,B.x)) && (Y <= MAX(A.y, B.y)) && (Y >= MIN(A.y, B.y))) &&
+            (((Y-10 <= y) && (y <= Y+10)) || ((X-10 <= x) && (x <= X+10)));
 }
 
 - (void)nodeViewFrameChanged:(CPNotification)notification
